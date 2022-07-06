@@ -9,9 +9,8 @@ import { useContextState } from '../../../contexts/ContextProvider';
 import CreateProjectOverlay from '../../../components/utilities/CreateProjectOverlay';
 import { Project } from '../../../components/utilities/Project';
 import DeleteActionModal from '../../../components/utilities/DeleteActionModal';
-import { ColorPallete } from '../../../components/utilities/ColorPallete';
-// import 'react-toastify/dist/ReactToastify.css';
-// import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 const Index = ({user}) => {
   const [projects,setProjects] = useState([]);
@@ -34,7 +33,7 @@ const Index = ({user}) => {
 
   const {isClicked,handleClick,handleClose} = useContextState();
 
-  // const notify = (message,type,position="bottom-right") => toast(msg,{type},{position});
+  const notify = (message,type,position="bottom-right") => toast(message,{type},{position});
 
  
 
@@ -44,10 +43,10 @@ const Index = ({user}) => {
     getAllUserProjects(projectsQuerystatus,projectsQuerySort,projectsSortBy,projectsSearchTerm).then(res => {
       setProjects(res.data.projects);
       setIsLoading(false);
-    }).catch(error => {
+    }).catch(() => {
       setError(true);
       setIsLoading(false);
-      console.log(error);
+      notify('Something went wrong!','error');
     })
     },1500);
   },[projectsQuerystatus,projectsSortBy,projectsQuerySort,projectsSearchTerm]);
@@ -66,11 +65,11 @@ const Index = ({user}) => {
         });
         setIsCreatingProject(false);
         clearFields();
-        // notify("Project created successfully!","success");
+        notify("Project created successfully!","success");
       }
     }).catch(() => {
       setIsCreatingProject(false);
-    //  notify("New project creation failed!","error");
+     notify("New project creation failed!","error");
     })
   }
 
@@ -80,12 +79,11 @@ const Index = ({user}) => {
     setError(false);
     updateProjectTitleOrDescription(projectId,data).then(res => {
       if(res.status === 201){
-        // notify("Project updated successfully!","success");
+        notify("Project updated successfully!","success");
         console.log('Update successful!')
       }
     }).catch(() => {
-      console.log('Update failed');
-      // notify("Project update failed!","error");
+      notify("Project update failed!","error");
     })
   }
 
@@ -97,11 +95,10 @@ const Index = ({user}) => {
         setProjects(filteredProjects);
         setShowDeleteActionModal(false);
         setProjectTobeDeletedId(null);
-        // notify("Project deleted successfully!","success");
+        notify("Project deleted successfully!","success");
       }
     }).catch(() =>{
-        console.log('Deletion failed');
-      // notify("Project deletion failed!","error")
+      notify("Project deletion failed!","error")
     });
   }
 
