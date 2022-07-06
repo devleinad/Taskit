@@ -58,7 +58,7 @@ export const getServerSideProps = async (context) => {
     if(!session){
         return {
             redirect : {
-                destination : 'taskit-tau.vercel.app/login',
+                destination : 'https://taskit-tau.vercel.app//login',
                 permanent:false,
             }
         }

@@ -36,8 +36,8 @@ function Login({csrfToken}) {
                     callbackUrl:window.location.origin
                 });
 
-                if(signinRes.url === "taskit-tau.vercel.app/"){
-                    router.push('taskit-tau.vercel.app/app/');
+                if(signinRes.url === "https://taskit-tau.vercel.app//"){
+                    router.push('https://taskit-tau.vercel.app//app/');
                 }
 
         } catch (error) {
@@ -113,7 +113,7 @@ export const getServerSideProps = async (context) => {
     if(session){
         return {
             redirect:{
-                destination:'taskit-tau.vercel.app/',
+                destination:'https://taskit-tau.vercel.app//',
                 permanent:false
             }
         }
