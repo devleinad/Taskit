@@ -40,7 +40,7 @@ function Signup({csrfToken}) {
         const data = {fullName,email,companyName,password,confirmPassword};
         try {
 
-            const apiResponse = await fetch('https://taskit-ofcbvfhij-devleinad.vercel.app/api/signup',{
+            const apiResponse = await fetch('taskit-tau.vercel.app/api/signup',{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
@@ -59,8 +59,8 @@ function Signup({csrfToken}) {
                     callbackUrl:window.location.origin
                 });
 
-                if(signinRes.url === "https://taskit-ofcbvfhij-devleinad.vercel.app/"){
-                    router.push('https://taskit-ofcbvfhij-devleinad.vercel.app/app/');
+                if(signinRes.url === "taskit-tau.vercel.app/"){
+                    router.push('taskit-tau.vercel.app/app/');
                 }
 
             }
@@ -171,7 +171,7 @@ export const getServerSideProps = async (context) => {
     if(session){
         return {
             redirect:{
-                destination:'https://taskit-ofcbvfhij-devleinad.vercel.app/app/',
+                destination:'taskit-tau.vercel.app/app/',
                 permanent:false
             }
         }

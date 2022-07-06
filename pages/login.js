@@ -36,8 +36,8 @@ function Login({csrfToken}) {
                     callbackUrl:window.location.origin
                 });
 
-                if(signinRes.url === "https://taskit-ofcbvfhij-devleinad.vercel.app/"){
-                    router.push('https://taskit-ofcbvfhij-devleinad.vercel.app/app/');
+                if(signinRes.url === "taskit-tau.vercel.app/"){
+                    router.push('taskit-tau.vercel.app/app/');
                 }
 
         } catch (error) {
@@ -113,7 +113,7 @@ export const getServerSideProps = async (context) => {
     if(session){
         return {
             redirect:{
-                destination:'https://taskit-ofcbvfhij-devleinad.vercel.app/',
+                destination:'taskit-tau.vercel.app/',
                 permanent:false
             }
         }
