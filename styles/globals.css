@@ -1,9 +1,64 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+
+:root{
+  --overlay-bg:rgba(0,0,0,0.4);
+  --overlay-inner-width:600px;
+}
+
+@layer utilities{
+
+  .w-55{
+    width: 230px;
+  }
+
+  .ml-230{
+    margin-left:230px;
+  }
+
+  .h-70{
+    min-height:70vh;
+  }
+
+  .bg-overlay{
+    background-color: var(--overlay-bg);
+  }
+
+  .zindex-1001{
+    z-index:1001;
+  }
+
+  .overlay-inner-width{
+    width: var(--overlay-inner-width);
+  }
+
+  .text-md{
+    font-size:15px;
+  }
+
+  .text-sm{
+    font-size:14px
+  }
+
+  .text-xs{
+    font-size:12px;
+  }
+
+
+}
+
+
+
 html,
 body {
   padding: 0;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    background-color: rgba(246, 246, 246, 0.1);
+    /* color: #141414; */
 }
 
 a {
@@ -14,3 +69,10 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.projects-header-grid, .projects-body-grid{
+  display: grid;
+  grid-template-columns: 5% 30% 25% 10% 15% 15%;
+  align-items: center;
+}
+
