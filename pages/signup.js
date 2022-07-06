@@ -60,7 +60,7 @@ function Signup({csrfToken}) {
                 });
 
                 if(signinRes.url === "https://taskit-nine.vercel.app"){
-                    router.push('/app/');
+                    router.push('https://taskit-nine.vercel.app/app/');
                 }
 
             }
