@@ -36,8 +36,8 @@ function Login({csrfToken}) {
                     callbackUrl:window.location.origin
                 });
 
-                if(signinRes.url === "http://localhost:3000"){
-                    router.push('/app/');
+                if(signinRes.url === "//"){
+                    router.push('//app/');
                 }
 
         } catch (error) {
@@ -113,7 +113,7 @@ export const getServerSideProps = async (context) => {
     if(session){
         return {
             redirect:{
-                destination:'/',
+                destination:'//',
                 permanent:false
             }
         }

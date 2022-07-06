@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { isConfirmed, isEmpty } from '../helpers';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { XIcon } from '@heroicons/react/outline';
 
 function Signup({csrfToken}) {
     const [fullName,setFullName] = useState('');
@@ -14,6 +15,7 @@ function Signup({csrfToken}) {
     const [error,setError] = useState(null);
     const [emailErrorMessage,setEmailErrorMessage] = useState(null);
     const [passwordErrorMessage,setPasswordErrorMessage] = useState(null);
+    const [isSigningup,setIsSigningUp] = useState(false);
     const router = useRouter();
 
 
@@ -21,9 +23,14 @@ function Signup({csrfToken}) {
     let submitButton;
 
     if(!isEmpty(fullName) && !isEmpty(email) && !isEmpty(password) && !isEmpty(confirmPassword) && isConfirmed(password,confirmPassword)){
-        submitButton =  <button type='submit' className='p-2 w-full bg-blue-400 text-white font-semibold text-lg rounded hover:bg-blue-600'>Signup</button>
+        submitButton =  <button type='submit' className='p-2 w-full bg-blue-400 
+        text-white font-semibold text-lg rounded hover:bg-blue-600'>{isSigningup ? 'Signing up...' : 'Signup'}</button>
     }else{
-        submitButton =  <button type='submit' className='p-2 w-full bg-slate-100 text-slate-600 font-semibold text-lg rounded hover:bg-blue-600' disabled>Signup</button>
+        submitButton =  <button type='submit' className='p-2 w-full 
+        bg-slate-100 text-slate-600 font-semibold text-lg rounded 
+        hover:bg-blue-600' disabled>
+        Signup
+    </button>
     }
 
     
@@ -33,7 +40,7 @@ function Signup({csrfToken}) {
         const data = {fullName,email,companyName,password,confirmPassword};
         try {
 
-            const apiResponse = await fetch('http://localhost:3000/api/signup',{
+            const apiResponse = await fetch('/api/signup',{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
@@ -52,13 +59,13 @@ function Signup({csrfToken}) {
                     callbackUrl:window.location.origin
                 });
 
-                if(signinRes.url === "http://localhost:3000"){
+                if(signinRes.url === "/"){
                     router.push('/app/');
                 }
 
             }
         } catch (error) {
-            console.log(error);
+            setError(true);
         }
         
         
@@ -84,6 +91,11 @@ function Signup({csrfToken}) {
             <div className='w-full md:w-1/2 flex flex-col justify-center items-center px-0'>
                 <div className='text-3xl font-bold'>Signup.</div>
                 <div className='p-2'>
+                    {
+                        error && (
+                            <div className='text-center p-2 bg-red-400'>Something went wrong! <XIcon className='w-2 h-2' onClick={() => setError(false)}/></div>
+                        )
+                    }
                     <form onSubmit={handleSignupSubmit}>
                         <div className='relative'>
                             <label className='font-semibold text-slate-600 text-sm'>Your Full Name *</label>
@@ -159,7 +171,7 @@ export const getServerSideProps = async (context) => {
     if(session){
         return {
             redirect:{
-                destination:'/',
+                destination:'/app/',
                 permanent:false
             }
         }

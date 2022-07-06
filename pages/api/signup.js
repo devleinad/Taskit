@@ -1,7 +1,6 @@
 import bcryptjs from "bcryptjs";
 import { isConfirmed,isEmpty} from "../../helpers";
 import { connect } from "../../lib/database/connection";
-// import { User } from "../../lib/database/models";
 
 export default async function handler (req,res) {
      const {fullName,email,companyName,password,confirmPassword} = req.body;

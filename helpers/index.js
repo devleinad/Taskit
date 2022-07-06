@@ -25,11 +25,11 @@ export const checkEmailAvailability = async (email) => {
 
 
 export const getAllUserProjects = async (status,sortOrder,sortBy,searchTerm) => {
-   const apiResponse = await axios.get(`http://localhost:3000/api/projects/?status=${status}&sort_order=${sortOrder}&sort_by=${sortBy}&q=${searchTerm}`,{
+   const apiResponse = await axios.get(`/api/projects/?status=${status}&sort_order=${sortOrder}&sort_by=${sortBy}&q=${searchTerm}`,{
        withCredentials:true,
         headers:{
                 'Content-Type':'application/json',
-                'Access-Control-Allow-Origin':"http://localhost:3000/",
+                'Access-Control-Allow-Origin':"/",
                 'Access-Control-Allow-Headers':'*',
                 'Access-Control-Allow-Methods':'GET'
             }
@@ -38,11 +38,11 @@ export const getAllUserProjects = async (status,sortOrder,sortBy,searchTerm) => 
 }
 
 export const createProject = (data) => {
-    const apiResponse = axios.post('http://localhost:3000/api/projects/create',data,{
+    const apiResponse = axios.post('/api/projects/create',data,{
         withCredentials:true,
             headers:{
                 'Content-Type':'application/json',
-                'Access-Control-Allow-Origin':"http://localhost:3000/",
+                'Access-Control-Allow-Origin':"/",
                 'Access-Control-Allow-Headers':'*',
                 'Access-Control-Allow-Methods':'METHOD'
             }
@@ -51,9 +51,14 @@ export const createProject = (data) => {
 }
 
 
+<<<<<<< HEAD
 export const deleteProject = (data) => {
     const apiResponse = axios.delete(`http://localhost:3000/api/projects/delete`,{
         data:JSON.stringify(data),
+=======
+export const deleteSingleProject = (id) => {
+    const apiResponse = axios.delete(`/api/projects/${id}`,{
+>>>>>>> 1c4a6174588dbf5514ce99786448d7f6534efff3
         withCredentials:true,
         headers:{
             'Content-Type':'application/json',
@@ -65,7 +70,7 @@ export const deleteProject = (data) => {
 
 
 export const updateProjectTitleOrDescription = (id,data) => {
-    const apiResponse = axios.patch(`http://localhost:3000/api/projects/${id}`,data,{
+    const apiResponse = axios.patch(`/api/projects/${id}`,data,{
         withCredentials:true,
         headers:{
             'Access-Control-Allow-Origin':"*"
@@ -74,16 +79,3 @@ export const updateProjectTitleOrDescription = (id,data) => {
     return apiResponse;
 }
 
-// export const signup = async (req,res) => {
-//     const {fullName,email,companyName,password,confirmPassword} = req.body;
-//     const connect = await connect();
-//     if(connect){
-//         const newUser = new User({
-//             fullName,
-//             email,
-//             companyName,
-//             password,
-
-//         })
-//     }
-// }
