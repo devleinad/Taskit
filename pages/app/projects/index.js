@@ -11,10 +11,7 @@ import { Project } from '../../../components/utilities/Project';
 import DeleteActionModal from '../../../components/utilities/DeleteActionModal';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
-<<<<<<< HEAD
 import { useRouter } from 'next/router';
-=======
->>>>>>> 1c4a6174588dbf5514ce99786448d7f6534efff3
 
 const Index = ({user}) => {
   const [projects,setProjects] = useState([]);
@@ -41,11 +38,7 @@ const Index = ({user}) => {
   const {isClicked,handleClick,handleClose} = useContextState();
 
   const notify = (message,type,position="bottom-right") => toast(message,{type},{position});
-<<<<<<< HEAD
   const router = useRouter();
-=======
-
->>>>>>> 1c4a6174588dbf5514ce99786448d7f6534efff3
  
 
   useEffect(() => {
@@ -80,7 +73,6 @@ const Index = ({user}) => {
       }
     }).catch((error) => {
       setIsCreatingProject(false);
-<<<<<<< HEAD
       if(error){
         switch(error.response.status){
           case 422:
@@ -96,9 +88,6 @@ const Index = ({user}) => {
             router.push('/login');
         }
       }
-=======
-     notify("New project creation failed!","error");
->>>>>>> 1c4a6174588dbf5514ce99786448d7f6534efff3
     })
   }
 
@@ -112,7 +101,6 @@ const Index = ({user}) => {
         console.log('Update successful!')
       }
     }).catch(() => {
-<<<<<<< HEAD
       if(error){
         switch(error.response.status){
           case 422:
@@ -128,9 +116,6 @@ const Index = ({user}) => {
             router.push('/login');
         }
       }
-=======
-      notify("Project update failed!","error");
->>>>>>> 1c4a6174588dbf5514ce99786448d7f6534efff3
     })
   }
 
@@ -145,7 +130,6 @@ const Index = ({user}) => {
           setIsDeletingMultipleSingleCheck(false);
         }
         setShowDeleteActionModal(false);
-<<<<<<< HEAD
         notify("Project deleted successfully!","success");
       }
     }).catch(() =>{
@@ -164,13 +148,6 @@ const Index = ({user}) => {
             router.push('/login');
         }
       }
-=======
-        setProjectTobeDeletedId(null);
-        notify("Project deleted successfully!","success");
-      }
-    }).catch(() =>{
-      notify("Project deletion failed!","error")
->>>>>>> 1c4a6174588dbf5514ce99786448d7f6534efff3
     });
   }
 
