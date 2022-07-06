@@ -29,7 +29,7 @@ export const getAllUserProjects = async (status,sortOrder,sortBy,searchTerm) => 
        withCredentials:true,
         headers:{
                 'Content-Type':'application/json',
-                'Access-Control-Allow-Origin':"http://localhost:3000/",
+                'Access-Control-Allow-Origin':"https://taskit-ofcbvfhij-devleinad.vercel.app",
                 'Access-Control-Allow-Headers':'*',
                 'Access-Control-Allow-Methods':'GET'
             }
@@ -42,7 +42,7 @@ export const createProject = (data) => {
         withCredentials:true,
             headers:{
                 'Content-Type':'application/json',
-                'Access-Control-Allow-Origin':"http://localhost:3000/",
+                'Access-Control-Allow-Origin':"https://taskit-ofcbvfhij-devleinad.vercel.app",
                 'Access-Control-Allow-Headers':'*',
                 'Access-Control-Allow-Methods':'METHOD'
             }
