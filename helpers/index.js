@@ -51,14 +51,9 @@ export const createProject = (data) => {
 }
 
 
-<<<<<<< HEAD
 export const deleteProject = (data) => {
     const apiResponse = axios.delete(`http://localhost:3000/api/projects/delete`,{
         data:JSON.stringify(data),
-=======
-export const deleteSingleProject = (id) => {
-    const apiResponse = axios.delete(`/api/projects/${id}`,{
->>>>>>> 1c4a6174588dbf5514ce99786448d7f6534efff3
         withCredentials:true,
         headers:{
             'Content-Type':'application/json',
