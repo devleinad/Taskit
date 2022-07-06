@@ -66,6 +66,7 @@ function Signup({csrfToken}) {
             }
         } catch (error) {
             setError(true);
+            console.log(error.message);
         }
         
         
