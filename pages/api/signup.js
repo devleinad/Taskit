@@ -6,7 +6,7 @@ export default async function handler (req,res) {
      const {fullName,email,companyName,password,confirmPassword} = req.body;
 
      //we must not accept empty data from certain fields.
-        if(isEmpty(fullName) && isEmpty(email) && isEmpty(password) && isEmpty(confirmPassword)){
+        if(isEmpty(fullName) || isEmpty(email) || isEmpty(password) || isEmpty(confirmPassword)){
             return res.status(422).json({msg:'Only company name is optional! Provide information for the remaining fields.'})
         
             //The two passwords must match
