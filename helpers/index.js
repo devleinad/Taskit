@@ -52,7 +52,7 @@ export const createProject = (data) => {
 
 
 export const deleteProject = (data) => {
-    const apiResponse = axios.delete(`http://localhost:3000/api/projects/delete`,{
+    const apiResponse = axios.delete(`/api/projects/delete`,{
         data:JSON.stringify(data),
         withCredentials:true,
         headers:{
