@@ -10,7 +10,7 @@ export default async function handler(req,res){
         //we must avoid duplicate project titles
         const projectExists = await db.collection('projects').findOne({user_id:ObjectId(user._id),title});
         if(projectExists){
-            return res.status(501).json({error:'Duplicate! You already have a project with the seame name'});
+            return res.status(423).json({error:'Duplicate! You already have a project with the seame name'});
         }else{
             const newProject = await db.collection('projects').insertOne({
                 user_id:ObjectId(user._id),

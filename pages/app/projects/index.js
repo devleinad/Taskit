@@ -2,16 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { getSession } from 'next-auth/react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { ChevronRightIcon, FolderIcon, PlusIcon, SearchIcon, TrashIcon } from '@heroicons/react/outline';
+import { ChevronRightIcon, FolderIcon, PlusIcon, SearchIcon, TrashIcon, XIcon } from '@heroicons/react/outline';
 import Layout from '../../../components/Layout';
-import { getAllUserProjects,createProject, deleteSingleProject, updateProjectTitleOrDescription } from '../../../helpers';
+import { getAllUserProjects,createProject, deleteProject, updateProjectTitleOrDescription, isEmpty } from '../../../helpers';
 import { useContextState } from '../../../contexts/ContextProvider';
 import CreateProjectOverlay from '../../../components/utilities/CreateProjectOverlay';
 import { Project } from '../../../components/utilities/Project';
 import DeleteActionModal from '../../../components/utilities/DeleteActionModal';
-import { ColorPallete } from '../../../components/utilities/ColorPallete';
-// import 'react-toastify/dist/ReactToastify.css';
-// import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 
 const Index = ({user}) => {
   const [projects,setProjects] = useState([]);
@@ -31,11 +31,14 @@ const Index = ({user}) => {
   const [dueDate, setDueDate] = useState('');
   const [projectTobeDeletedId,setProjectTobeDeletedId] = useState(null);
   const [showDeleteActionModal,setShowDeleteActionModal] = useState(false);
+  const [inputFillError,setInputFillError] = useState('');
+  const [deletableProjectsList,setDeletableProjectsLists] = useState([]);
+  const [isDeletingMultipleSingleCheck,setIsDeletingMultipleSingleCheck] = useState(false);
 
   const {isClicked,handleClick,handleClose} = useContextState();
 
-  // const notify = (message,type,position="bottom-right") => toast(msg,{type},{position});
-
+  const notify = (message,type,position="bottom-right") => toast(message,{type},{position});
+  const router = useRouter();
  
 
   useEffect(() => {
@@ -44,10 +47,10 @@ const Index = ({user}) => {
     getAllUserProjects(projectsQuerystatus,projectsQuerySort,projectsSortBy,projectsSearchTerm).then(res => {
       setProjects(res.data.projects);
       setIsLoading(false);
-    }).catch(error => {
+    }).catch(() => {
       setError(true);
       setIsLoading(false);
-      console.log(error);
+      notify('Something went wrong!','error');
     })
     },1500);
   },[projectsQuerystatus,projectsSortBy,projectsQuerySort,projectsSearchTerm]);
@@ -66,11 +69,25 @@ const Index = ({user}) => {
         });
         setIsCreatingProject(false);
         clearFields();
-        // notify("Project created successfully!","success");
+        notify("Project created successfully!","success");
       }
-    }).catch(() => {
+    }).catch((error) => {
       setIsCreatingProject(false);
-    //  notify("New project creation failed!","error");
+      if(error){
+        switch(error.response.status){
+          case 422:
+            setInputFillError('The project title field is required!');
+            break;
+          case 423:
+            setInputFillError('Duplicate! You already have a project with the same title.');
+            break;
+          case 501 || 500:
+            notify("Something went wrong!","error");
+            break;
+          case 401:
+            router.push('/login');
+        }
+      }
     })
   }
 
@@ -80,28 +97,57 @@ const Index = ({user}) => {
     setError(false);
     updateProjectTitleOrDescription(projectId,data).then(res => {
       if(res.status === 201){
-        // notify("Project updated successfully!","success");
+        notify("Project updated successfully!","success");
         console.log('Update successful!')
       }
     }).catch(() => {
-      console.log('Update failed');
-      // notify("Project update failed!","error");
+      if(error){
+        switch(error.response.status){
+          case 422:
+            setInputFillError('The project title field is required!');
+            break;
+          case 423:
+            setInputFillError('Duplicate! You already have a project with the same title.');
+            break;
+          case 501 || 500:
+            notify("Something went wrong!","error");
+            break;
+          case 401:
+            router.push('/login');
+        }
+      }
     })
   }
 
 
   const handleDeleteProject = () => {
-    deleteSingleProject(projectTobeDeletedId).then(res => {
+    deleteProject({projects:deletableProjectsList}).then(res => {
       if(res.status === 201){
-        const filteredProjects = projects.filter(project => project._id !== projectTobeDeletedId);
-        setProjects(filteredProjects);
+        const filteredData = projects.filter(project => false === deletableProjectsList.includes(project._id));
+        setProjects(filteredData);
+        setDeletableProjectsLists([]);
+        if(isDeletingMultipleSingleCheck){
+          setIsDeletingMultipleSingleCheck(false);
+        }
         setShowDeleteActionModal(false);
-        setProjectTobeDeletedId(null);
-        // notify("Project deleted successfully!","success");
+        notify("Project deleted successfully!","success");
       }
     }).catch(() =>{
-        console.log('Deletion failed');
-      // notify("Project deletion failed!","error")
+      if(error){
+        switch(error.response.status){
+          case 422:
+            setInputFillError('The project title field is required!');
+            break;
+          case 423:
+            setInputFillError('Duplicate! You already have a project with the same title.');
+            break;
+          case 501 || 500:
+            notify("Project deletion failed!","error")
+            break;
+          case 401:
+            router.push('/login');
+        }
+      }
     });
   }
 
@@ -113,21 +159,52 @@ const Index = ({user}) => {
     setStatus('Active');
     setDueDate('');
     setDescription('');
+    setInputFillError('');
+    setError(false);
   }
 
-  const initiateDeleteAction = (projectId) => {
-    setProjectTobeDeletedId(projectId);
+  const initiateProjectDeleteAction = () => {
     setShowDeleteActionModal(true);
   }
 
+ 
   const cancelDeleteAction = () => {
     setShowDeleteActionModal(false);
     setProjectTobeDeletedId(null);
   }
 
+  const addToDeletableProjectsList = (id) => {
+    setDeletableProjectsLists(previousList => {
+      return [...previousList,id];
+    })
+  }
+
+  const removeFromDeletableProjectsList = (id) => {
+    const filteredProjects = deletableProjectsList.filter(value => value !== id);
+    setDeletableProjectsLists(filteredProjects);
+  }
+
+
+  const toggleMultipleProjectsDeletion = (e) => {
+    if(e.target.checked){
+      setIsDeletingMultipleSingleCheck(true);
+      const elements = document.getElementsByClassName('project-select-box');
+      for(var i = 0; i < elements.length; i++){
+        elements[i].checked = true;
+        const id = elements[i].getAttribute('data-id');
+        setDeletableProjectsLists(previousData => {
+          return [...previousData,id];
+        })
+      }
+    }else{
+      setDeletableProjectsLists([]);
+      setIsDeletingMultipleSingleCheck(false);
+    }
+  }
+
 
   const deleteProjectWarningMessage = (<React.Fragment>
-    <p>Are you sure you want to delete this project? Please remeber this action cannot be undone.</p>
+    <p>Are you sure you want to delete {deletableProjectsList.length > 1 ? 'these projects?' : 'this project?'} Please remeber this action cannot be undone.</p>
     <p>Click &quot;Delete&quot; to proceed with this action, or &quot;Cancel&quot; to cancel this action.</p>
   </React.Fragment>)
 
@@ -182,13 +259,7 @@ const Index = ({user}) => {
 
               </div>
 
-              {
-                isLoading && (
-                  <div className='flex justify-center items-center p-2 h-70'>
-                      <div className='font-bold text-md px-3 py-2 bg-white rounded-full'>Loading...</div>
-                  </div>
-                )
-              }
+             
 
               {
                 isClicked.createProjectOverlay && <CreateProjectOverlay
@@ -206,53 +277,42 @@ const Index = ({user}) => {
                 clearFields={clearFields}
                 handleCreateProject={handleCreateProject}
                 isCreatingProject={isCreatingProject}
-                
+                inputFillError={inputFillError}
                  />
               }
 
 
-              {
-                !isLoading && projects?.length < 1 && (
-                   <div className='flex justify-center items-center p-2 h-70'>
-                      <div className='flex flex-col gap-1 font-bold text-lg p-2'>
-                        <p className='text-sm'>No projects found!</p>
-                          <button type='button' className='px-3 py-2 bg-blue-500 text-gray-200 
-                          text-sm font-semibold flex space-x-1 items-center 
-                          justify-center rounded-full transition duration-30
-                          hover:drop-shadow-xl
-                          hover:bg-blue-700'
-                          onClick={() => handleClick('createProjectOverlay')}
-                          >
-                            <PlusIcon className='w-5 h-5'/>
-                            <span>Create</span>
-                          </button>
-                      </div>
-                  </div>
-                )
-              }
-
-            {
-              !isLoading && projects?.length > 0 && (
+           
                  <div className='mt-4 border border-slate-100 overflow-x-auto md:overflow-x-none'>
                    {/* <div className='text-sm text-gray-500'>
                      <p>Sowing 1 to {projectsSliceLimit} of {projects?.length}</p>
                    </div> */}
                    <div className='flex justify-between items-center px-2 border-b border-b-slate-100'>
-                      <div className='flex items-center cursor-pointer'>
-                        <TrashIcon className='w-3 h-3'/>
-                        <span className='text-xs font-semibold text-gray-500'>Delete</span>
-                      </div>
+                      <button className={`flex items-center outline-none ${deletableProjectsList.length > 0 ? 'text-red-500' : 'text-gray-400'}`}
+                       disabled={deletableProjectsList.length === 0 && true}
+                       onClick={initiateProjectDeleteAction}
+                       >
+                          <TrashIcon className='w-3 h-3'/>
+                          <span className='text-xs font-semibold'>Delete</span>
+                      </button>
+                    
                       <div className='flex gap-3 items-center  bg-inherit px-2 py-1 rounded w-fit'>
-                    <SearchIcon className='w-4 h-4 text-gray-400'/>
-                    <input type={'text'} value={projectsSearchTerm}
-                     className='outline-none bg-inherit' placeholder='Search...'
-                     onChange={(e) => setProjectsSearchTerm(e.target.value)}
-                    />
-                  </div>
+                        <SearchIcon className='w-4 h-4 text-gray-400'/>
+                        <input type={'text'} value={projectsSearchTerm}
+                        className='outline-none bg-inherit w-fit' placeholder='Search...'
+                        onChange={(e) => setProjectsSearchTerm(e.target.value)}
+                        />
+                        {
+                          !isEmpty(projectsSearchTerm) && (
+                            <XIcon className='w-4 h-4 cursor-pointer' title="Clear" onClick={() => setProjectsSearchTerm('')}/>
+                          )
+                        }
+                      </div>
+                      
                    </div>
                    <div className='projects-header-grid text-xs md:text-sm font-semibold text-gray-500 border-b border-slate-100 bg-white'>
                      <div className='project-check-all-header text-center p-2'>
-                        <input type={'checkbox'} />
+                        <input type={'checkbox'} onClick={(e) => toggleMultipleProjectsDeletion(e)} checked={isDeletingMultipleSingleCheck} />
                      </div>
 
                      <div className='project-title-header p-2'>
@@ -275,20 +335,38 @@ const Index = ({user}) => {
                         Actions
                      </div>
                    </div>
+                    
+                     {
+                      isLoading && (
+                        <div className='flex justify-center items-center p-2'>
+                            <div className='font-bold text-md py-2'>Loading...</div>
+                        </div>
+                      )
+                    }
+                    
+                    {
+                      !isLoading && projects?.length < 1 && (
+                          <div className='text-center p-2'>
+                              <p className='text-sm text-gray-500'>No projects found!</p>
+                          </div>
+                      )
+                    }
 
                    {
-                      projects?.slice(0,projectsSliceLimit).map(project => (
+                      !isLoading && projects?.length > 0 && projects?.slice(0,projectsSliceLimit).map(project => (
                         <Project  
                         key={project?._id} 
                         project={project} 
-                        initiateDeleteAction={initiateDeleteAction}
+                        initiateProjectDeleteAction={initiateProjectDeleteAction}
                         updateProject={handleUpdateProjectByTitleOrDescription}
+                        addToDeletableProjectsList={addToDeletableProjectsList}
+                        removeFromDeletableProjectsList={removeFromDeletableProjectsList}
                         />
                       ))
                    }
                 </div>
-              )
-            }
+              
+            
            
         </Layout>
      

@@ -17,7 +17,8 @@ const CreateProjectOverlay = ({
     handleClose,
     clearFields,
     isCreatingProject,
-    handleCreateProject
+    handleCreateProject,
+    inputFillError
 }) => {
 
 const [step,setStep] = useState(1);
@@ -44,13 +45,22 @@ const close = () => {
     }
 }
 
+const createProject = () => {
+    if(showColorPalette){
+        setShowColorPalette(false);
+    }
+
+    handleCreateProject();
+}
+
 
 
 let proceedToCreateProjectBtn;
 if(!isEmpty(title)){
     proceedToCreateProjectBtn = (
-        <button className='px-3 py-2 rounded-full bg-blue-600 text-white font-semibold text-md hover:drop-shadow-lg'
-        onClick={handleCreateProject}
+        <button className='px-3 py-2 rounded-full bg-blue-600 text-white font-semibold 
+        text-md hover:drop-shadow-lg'
+        onClick={createProject}
         >
            {isCreatingProject ? 'Creating...' : 'CREATE PROJECT'}
         </button>
@@ -65,7 +75,8 @@ if(!isEmpty(title)){
 }
     
   return (
-    <div className='fixed top-0 left-0 bg-overlay zindex-1001 w-full h-full flex items-center justify-center overflow-x-hidden'>
+    <div className='fixed top-0 left-0 bg-overlay zindex-1001 w-full h-full flex items-center 
+    justify-center overflow-x-hidden'>
         <div className='w-full md:overlay-inner-width bg-white p-2 md:p-6 rounded'>
             <div className='flex items-center justify-between'>
 
@@ -83,6 +94,11 @@ if(!isEmpty(title)){
                     <React.Fragment>
                         <div className='mt-4'>
                             {
+                                inputFillError && (
+                                    <div className='text-center p-2 rounded font-semibold text-red-500'>{inputFillError}</div>
+                                )
+                            }
+                            {
                                 showColorPalette && <div className='flex justify-center'>
                                     <ColorPallete 
                                     onChange={setRepColor}
@@ -90,15 +106,22 @@ if(!isEmpty(title)){
                                     />
                                 </div>
                             }
+                            
                             <div className='flex flex-col gap-1'>
                                 <label className='text-md font-semibold text-gray-500'>Title of project</label>
                                 <input 
-                                className='border p-2 rounded border border-slate-100 hover:border-blue-200 outline-none'
+                                className='p-2 rounded border border-slate-100 hover:border-blue-200 outline-none'
                                 type={"text"} 
                                 name='title' 
                                 value={title}
                                 placeholder='eg. Learn web development'
-                                onChange={(e) => setTitle(e.target.value)} />
+                                onChange={(e) => setTitle(e.target.value)}
+                                onFocus={() => {
+                                    if(showColorPalette){
+                                        setShowColorPalette(false);
+                                    }
+                                }}
+                                 />
                             </div>
 
                             <div className='mt-5'>
@@ -120,7 +143,13 @@ if(!isEmpty(title)){
                                         <select className='border border-slate-200 rounded p-2'
                                         name='status'
                                         value={status} 
-                                        onChange={(e) => setStatus(e.target.value) }>
+                                        onChange={(e) => setStatus(e.target.value) }
+                                        onFocus={() => {
+                                            if(showColorPalette){
+                                                setShowColorPalette(false);
+                                            }
+                                        }}
+                                                >
                                             <option value={'Active'}>Active</option>
                                             <option value={'Completed'}>Completed</option>
                                         </select>
@@ -132,7 +161,13 @@ if(!isEmpty(title)){
                                         <input type={'date'} className='border border-slate-200 rounded p-2'
                                         name='dueDate'
                                         value={dueDate} 
-                                        onChange={(e) => setDueDate(e.target.value) }/>
+                                        onChange={(e) => setDueDate(e.target.value) }
+                                        onFocus={() => {
+                                            if(showColorPalette){
+                                                setShowColorPalette(false);
+                                            }
+                                        }}
+                                        />
                                     </div>
 
                                 </div>
@@ -143,7 +178,13 @@ if(!isEmpty(title)){
                                 <textarea rows={2} className='border border-slate-200 rounded p-2 outline-none hover:border-blue-200'
                                 name='description'
                                 value={description} 
-                                onChange={(e) => setDescription(e.target.value) }/>
+                                onChange={(e) => setDescription(e.target.value) }
+                                onFocus={() => {
+                                    if(showColorPalette){
+                                        setShowColorPalette(false);
+                                    }
+                                }}
+                                />
                             </div>
 
                            <div className='mt-5 flex justify-center'>

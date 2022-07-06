@@ -51,10 +51,12 @@ export const createProject = (data) => {
 }
 
 
-export const deleteSingleProject = (id) => {
-    const apiResponse = axios.delete(`http://localhost:3000/api/projects/${id}`,{
+export const deleteProject = (data) => {
+    const apiResponse = axios.delete(`http://localhost:3000/api/projects/delete`,{
+        data:JSON.stringify(data),
         withCredentials:true,
         headers:{
+            'Content-Type':'application/json',
             'Access-Control-Allow-Origin':"*"
         }
     });

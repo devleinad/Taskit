@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useContextState } from '../contexts/ContextProvider'
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-// import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 
 function Layout({user,children}) {
     const {isSidebarOpen} = useContextState();
@@ -10,7 +10,7 @@ function Layout({user,children}) {
   return (
     
    <React.Fragment>
-     {/* <ToastContainer/> */}
+     <ToastContainer/>
       <div className='pb-10 md:pb-0'>
        {
         isSidebarOpen && (
