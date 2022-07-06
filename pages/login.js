@@ -36,8 +36,8 @@ function Login({csrfToken}) {
                     callbackUrl:window.location.origin
                 });
 
-                if(signinRes.url === "//"){
-                    router.push('//app/');
+                if(signinRes.url === "https://taskit-nine.vercel.app"){
+                    router.push('https://taskit-nine.vercel.app');
                 }
 
         } catch (error) {
