@@ -29,8 +29,6 @@ const Navbar = ({user}) => {
       handleResize();
 
       return () => window.removeEventListener('resize', handleResize);
-
-
     });
 
     useEffect(() => {
