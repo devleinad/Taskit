@@ -14,17 +14,16 @@ import NavButton from './utilities/NavButton';
 const Navbar = ({user}) => {
 
     const {
-      isSidebarOpen,
       setIsSidebarOpen,
       isClicked,
-      setIsClicked,
       handleClick,
       screenSize,
       setScreenSize
     } = useContextState();
 
-    const handleResize = () => setScreenSize(window.innerWidth);
     useEffect(() => {      
+      const handleResize = () => setScreenSize(window.innerWidth);
+
       window.addEventListener('resize',handleResize);
 
       handleResize();
