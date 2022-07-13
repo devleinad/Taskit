@@ -24,7 +24,7 @@ function Signup({csrfToken}) {
 
     if(!isEmpty(fullName) && !isEmpty(email) && !isEmpty(password) && !isEmpty(confirmPassword) && isConfirmed(password,confirmPassword)){
         submitButton =  <button type='submit' className='p-2 w-full bg-blue-400 
-        text-white font-semibold text-lg rounded hover:bg-blue-600'>{isSigningup ? 'Signing up...' : 'Signup'}</button>
+        text-white font-semibold text-lg rounded hover:bg-blue-600' disabled={isSigningup & true}>{isSigningup ? 'Signing up...' : 'Signup'}</button>
     }else{
         submitButton =  <button type='submit' className='p-2 w-full 
         bg-slate-100 text-slate-600 font-semibold text-lg rounded 
@@ -37,6 +37,7 @@ function Signup({csrfToken}) {
 
     const handleSignupSubmit = async (e) => {
         e.preventDefault();
+        setIsSigningUp(true);
         const data = {fullName,email,companyName,password,confirmPassword};
         try {
 
@@ -59,13 +60,15 @@ function Signup({csrfToken}) {
                     callbackUrl:window.location.origin
                 });
 
-                if(signinRes.url === "/"){
-                    router.push('/app/');
+                if(signinRes.url === "https://taskit-nine.vercel.app"){
+                    router.push('https://taskit-nine.vercel.app/app/');
                 }
 
             }
         } catch (error) {
             setError(true);
+            setIsSigningUp(false);
+            console.log(error.message);
         }
         
         
@@ -93,7 +96,9 @@ function Signup({csrfToken}) {
                 <div className='p-2'>
                     {
                         error && (
-                            <div className='text-center p-2 bg-red-400'>Something went wrong! <XIcon className='w-2 h-2' onClick={() => setError(false)}/></div>
+                            <div className='flex founded text-white font-semibold items-center justify-centerp-2 bg-red-400'>
+                                <span>Something went wrong!</span>
+                            <XIcon className='w-2 h-2' onClick={() => setError(false)}/></div>
                         )
                     }
                     <form onSubmit={handleSignupSubmit}>
