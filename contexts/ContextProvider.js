@@ -7,7 +7,7 @@ const initialState = {
   chatOverlay:false,
   notificationOverlay:false,
   profileOverlay:false,
-  createProjectOverlay:false,
+  createOrUpdateProjectOverlay:false,
   deleteActionOverlay:false,
 }
 const ContextProvider = ({children}) => {

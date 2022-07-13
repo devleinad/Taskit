@@ -4,9 +4,9 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { ChevronRightIcon, FolderIcon, PlusIcon, SearchIcon, TrashIcon, XIcon } from '@heroicons/react/outline';
 import Layout from '../../../components/Layout';
-import { getAllUserProjects,createProject, deleteProject, updateProjectTitleOrDescription, isEmpty } from '../../../helpers';
+import { getAllUserProjects,createProject, deleteProject, updateProjectTitleOrDescription, isEmpty, updateProject } from '../../../helpers';
 import { useContextState } from '../../../contexts/ContextProvider';
-import CreateProjectOverlay from '../../../components/utilities/CreateProjectOverlay';
+import CreateOrUpdateProjectOverlay from '../../../components/utilities/CreateOrUpdateProjectOverlay';
 import { Project } from '../../../components/utilities/Project';
 import DeleteActionModal from '../../../components/utilities/DeleteActionModal';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,17 +23,19 @@ const Index = ({user}) => {
   const [projectsSortBy,setProjectsSortBy] = useState('_id');
   const [projectsSearchTerm,setProjectsSearchTerm] = useState('');
   //details for creating projects
-  const [isCreatingProject,setIsCreatingProject] = useState(false);
+  const [isProcessing,setIsProcessing] = useState(false);
+  const [action,setAction] = useState('create');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [repColor, setRepColor] = useState('#071D90');
   const [status, setStatus] = useState('Active');
   const [dueDate, setDueDate] = useState('');
-  const [projectTobeDeletedId,setProjectTobeDeletedId] = useState(null);
   const [showDeleteActionModal,setShowDeleteActionModal] = useState(false);
   const [inputFillError,setInputFillError] = useState('');
   const [deletableProjectsList,setDeletableProjectsLists] = useState([]);
   const [isDeletingMultipleSingleCheck,setIsDeletingMultipleSingleCheck] = useState(false);
+  const [projectTobeUpdatedId,setProjectTobeUpdatedId] = useState(null);
+
 
   const {isClicked,handleClick,handleClose} = useContextState();
 
@@ -51,54 +53,145 @@ const Index = ({user}) => {
       setError(true);
       setIsLoading(false);
       notify('Something went wrong!','error');
-    })
+    });
     },1500);
   },[projectsQuerystatus,projectsSortBy,projectsQuerySort,projectsSearchTerm]);
 
+  // we should be able to update the title and description of a particular project
+  const changeTitleOrDescription = (e) => {
+    const project_id = e.target.getAttribute('data-id');
+    const updatedProjects = projects.map(project => {
+      if(project._id === project_id){
+        return {
+          ...project,
+          [e.target.name]:e.target.value
+        }
+      }else{
+        return project;
+      }
+    }) ;
+      setProjects(updatedProjects);
+  }
 
 
 
   //create a project
-  const handleCreateProject = () => {
-    setIsCreatingProject(true);
+  const handleCreateOrUpdateProject = () => {
     const data = {title,repColor,status,dueDate,description};
-    createProject(data).then(res => {
-      if(res.status === 201){
-        setProjects(previousData => {
-          return [res.data.project,...previousData];
+
+    if(action === "create"){
+        setIsProcessing(true);
+        createProject(data).then(res => {
+          if(res.status === 201){
+            setProjects(previousData => {
+              return [res.data.project,...previousData];
+            });
+            handleClose('createOrUpdateProjectOverlay');
+            setIsProcessing(false);
+            clearFields();
+          
+            notify("Project created successfully!","success");
+          }
+        }).catch((error) => {
+          setIsProcessing(false);
+          if(error){
+            switch(error.response.status){
+              case 422:
+                setInputFillError('The project title field is required!');
+                break;
+              case 423:
+                setInputFillError('Duplicate! You already have a project with the same title.');
+                break;
+              case 501 || 500:
+                notify("Something went wrong!","error");
+                break;
+              case 401:
+                router.push('/login');
+            }
+          }
         });
-        setIsCreatingProject(false);
-        clearFields();
-        notify("Project created successfully!","success");
-      }
-    }).catch((error) => {
-      setIsCreatingProject(false);
-      if(error){
-        switch(error.response.status){
-          case 422:
-            setInputFillError('The project title field is required!');
-            break;
-          case 423:
-            setInputFillError('Duplicate! You already have a project with the same title.');
-            break;
-          case 501 || 500:
-            notify("Something went wrong!","error");
-            break;
-          case 401:
-            router.push('/login');
+
+    }
+
+     if(action === "update"){
+      setIsProcessing(true);
+       updateProject(projectTobeUpdatedId,data).then(res => {
+        if(res.status === 201){
+          const returnedProject = res.data.updatedProject;
+          console.log(returnedProject.title);
+          // const updatedProjects = projects.map(project => {
+          //   if(project._id === returnedProject._id){
+          //     return {
+          //       ...project,
+          //       title:returnedProject.title,
+          //       repColor:returnedProject.repColor,
+          //       status:returnedProject.status,
+          //       description:returnedProject.description,
+          //       dueDate:returnedProject.dueDate,
+          //       updatedAt:returnedProject.updatedAt,
+          //     }
+          //   }else{
+          //     return project;
+          //   }
+          // });
+      
+          setProjects(currentProjects => {
+            const updatedProjects = currentProjects.map(project => {
+              if(project._id === returnedProject._id){
+                return {
+                  ...project,
+                  title:returnedProject.title,
+                  repColor:returnedProject.repColor,
+                  status:returnedProject.status,
+                  description:returnedProject.description,
+                  dueDate:returnedProject.dueDate,
+                  updatedAt:returnedProject.updatedAt,
+                }
+              }else{
+                return project;
+              }
+            });
+
+            console.log(updatedProjects);
+
+            return updatedProjects;
+          });
+
+          handleClose('createOrUpdateProjectOverlay');
+          setIsProcessing(false);
+          notify("Project updated successfully!","success");
+          clearFields();
         }
-      }
-    })
-  }
+       }).catch(error => {
+          setIsProcessing(false);
+          if(error){
+            switch(error.response.status){
+              case 422:
+                setInputFillError('The project title field is required!');
+                break;
+              case 423:
+                setInputFillError('Duplicate! You already have a project with the same title.');
+                break;
+              case 501 || 500:
+                notify("Something went wrong!","error");
+                break;
+              case 401:
+                router.push('/login');
+            }
+          }
+       });
+    }
+    
+}
 
   //update a projects title or description
 
   const handleUpdateProjectByTitleOrDescription = (projectId,data) => {
     setError(false);
     updateProjectTitleOrDescription(projectId,data).then(res => {
-      if(res.status === 201){
-        notify("Project updated successfully!","success");
-        console.log('Update successful!')
+      if(res.status === 200){
+        // notify("Project updated successfully!","success");
+        return true;
       }
     }).catch(() => {
       if(error){
@@ -116,7 +209,9 @@ const Index = ({user}) => {
             router.push('/login');
         }
       }
-    })
+    });
+    
+
   }
 
 
@@ -154,6 +249,7 @@ const Index = ({user}) => {
 
   //clear fields when 
   const clearFields = () => {
+    setProjectTobeUpdatedId(null);
     setTitle('');
     setRepColor('#071D90');
     setStatus('Active');
@@ -161,6 +257,8 @@ const Index = ({user}) => {
     setDescription('');
     setInputFillError('');
     setError(false);
+    setProjectTobeUpdatedId(null);
+    setAction('create');
   }
 
   const initiateProjectDeleteAction = () => {
@@ -170,7 +268,6 @@ const Index = ({user}) => {
  
   const cancelDeleteAction = () => {
     setShowDeleteActionModal(false);
-    setProjectTobeDeletedId(null);
   }
 
   const addToDeletableProjectsList = (id) => {
@@ -200,6 +297,19 @@ const Index = ({user}) => {
       setDeletableProjectsLists([]);
       setIsDeletingMultipleSingleCheck(false);
     }
+  }
+
+
+  const handleSetProjectDetailsForUpdate = (project) => {
+    setAction('update');
+    const {_id,title,description,status,dueDate,repColor} = project;
+    setTitle(title);
+    setDescription(description);
+    setStatus(status);
+    setDueDate(dueDate);
+    setRepColor(repColor);
+    setProjectTobeUpdatedId(_id);
+    handleClick('createOrUpdateProjectOverlay');
   }
 
 
@@ -251,7 +361,10 @@ const Index = ({user}) => {
                   
                   <button type='button' 
                   className='px-2 py-1 bg-blue-500 rounded text-white text-sm font-semibold flex items-center justify-center  transition duration-50 hover:bg-blue-600 hover:drop-shadow-lg'
-                  onClick={() => handleClick('createProjectOverlay')}
+                  onClick={() => {
+                    setAction('create');
+                    handleClick('createOrUpdateProjectOverlay')
+                  }}
                   >
                       <PlusIcon className='w-4 h-4 text-white'/>
                       <span>Add <span className='hidden md:inline'>project</span></span>
@@ -262,7 +375,8 @@ const Index = ({user}) => {
              
 
               {
-                isClicked.createProjectOverlay && <CreateProjectOverlay
+                isClicked.createOrUpdateProjectOverlay && <CreateOrUpdateProjectOverlay
+                action={action}
                 title={title}
                 setTitle={setTitle}
                 description={description}
@@ -275,8 +389,8 @@ const Index = ({user}) => {
                 setDueDate={setDueDate}
                 handleClose={handleClose}
                 clearFields={clearFields}
-                handleCreateProject={handleCreateProject}
-                isCreatingProject={isCreatingProject}
+                handleCreateOrUpdateProject={handleCreateOrUpdateProject}
+                isProcessing={isProcessing}
                 inputFillError={inputFillError}
                  />
               }
@@ -284,9 +398,7 @@ const Index = ({user}) => {
 
            
                  <div className='mt-4 border border-slate-100 overflow-x-auto md:overflow-x-none'>
-                   {/* <div className='text-sm text-gray-500'>
-                     <p>Sowing 1 to {projectsSliceLimit} of {projects?.length}</p>
-                   </div> */}
+                  
                    <div className='flex justify-between items-center px-2 border-b border-b-slate-100'>
                       <button className={`flex items-center outline-none ${deletableProjectsList.length > 0 ? 'text-red-500' : 'text-gray-400'}`}
                        disabled={deletableProjectsList.length === 0 && true}
@@ -311,23 +423,23 @@ const Index = ({user}) => {
                       
                    </div>
                    <div className='projects-header-grid text-xs md:text-sm font-semibold text-gray-500 border-b border-slate-100 bg-white'>
-                     <div className='project-check-all-header text-center p-2'>
-                        <input type={'checkbox'} onClick={(e) => toggleMultipleProjectsDeletion(e)} checked={isDeletingMultipleSingleCheck} />
+                     <div className='project-check-all-header p-2'>
+                        <input type={'checkbox'} onChange={(e) => toggleMultipleProjectsDeletion(e)} checked={isDeletingMultipleSingleCheck} />
                      </div>
 
                      <div className='project-title-header p-2'>
                         Project Title
                      </div>
 
-                     <div className='project-description-header p-2'>
+                     <div className='hidden md:inline-block project-description-header p-2'>
                         Description
                      </div>
 
-                     <div className='project-status-header p-2'>
+                     <div className='hidden md:inline-block project-status-header p-2'>
                         Status
                      </div>
 
-                     <div className='project-due-date-header text-center p-2'>
+                     <div className='hidden md:inline-block project-due-date-header text-center p-2'>
                         Due date
                      </div>
 
@@ -357,10 +469,12 @@ const Index = ({user}) => {
                         <Project  
                         key={project?._id} 
                         project={project} 
+                        changeTitleOrDescription={changeTitleOrDescription}
                         initiateProjectDeleteAction={initiateProjectDeleteAction}
                         updateProject={handleUpdateProjectByTitleOrDescription}
                         addToDeletableProjectsList={addToDeletableProjectsList}
                         removeFromDeletableProjectsList={removeFromDeletableProjectsList}
+                        handleSetProjectDetailsForUpdate={handleSetProjectDetailsForUpdate}
                         />
                       ))
                    }

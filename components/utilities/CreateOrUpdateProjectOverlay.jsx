@@ -1,9 +1,10 @@
-import { ArrowRightIcon, FolderAddIcon, XIcon } from '@heroicons/react/outline';
+import { ArrowRightIcon, FolderAddIcon, FolderIcon, XIcon } from '@heroicons/react/outline';
 import React, { useState } from 'react';
 import { isEmpty } from '../../helpers';
 import { ColorPallete } from './ColorPallete';
 
-const CreateProjectOverlay = ({
+const CreateOrUpdateProjectOverlay = ({
+    action,
     title,
     setTitle,
     description,
@@ -16,20 +17,19 @@ const CreateProjectOverlay = ({
     setDueDate,
     handleClose,
     clearFields,
-    isCreatingProject,
-    handleCreateProject,
+    isProcessing,
+    handleCreateOrUpdateProject,
     inputFillError
 }) => {
 
 const [step,setStep] = useState(1);
 const [showColorPalette,setShowColorPalette] = useState(false);
 
-
 const close = () => {
-    if(!isEmpty(title) || !isEmpty(description) || !isEmpty(dueDate)){
+    if(action === "create" && (!isEmpty(title) || !isEmpty(description) || !isEmpty(dueDate))){
         if(confirm('Are you sure you wan to cancel the process? Please note that this action will affect the current data.')){
             clearFields();
-            handleClose('createProjectOverlay');
+            handleClose('createOrUpdateProjectOverlay');
             if(showColorPalette){
             setShowColorPalette(false);
              }
@@ -38,38 +38,40 @@ const close = () => {
             return;
         }
     }else{
-        handleClose('createProjectOverlay');
+        clearFields();
+        handleClose('createOrUpdateProjectOverlay');
         if(showColorPalette){
             setShowColorPalette(false);
         }
     }
 }
 
-const createProject = () => {
+const createOrUpdateProject = () => {
     if(showColorPalette){
         setShowColorPalette(false);
     }
 
-    handleCreateProject();
+    handleCreateOrUpdateProject();
 }
 
 
 
-let proceedToCreateProjectBtn;
+let proceedToCreateOrUpdateProjectBtn;
 if(!isEmpty(title)){
-    proceedToCreateProjectBtn = (
-        <button className='px-3 py-2 rounded-full bg-blue-600 text-white font-semibold 
+    proceedToCreateOrUpdateProjectBtn = (
+        <button className='p-3 rounded bg-blue-600 text-white font-semibold 
         text-md hover:drop-shadow-lg'
-        onClick={createProject}
+        onClick={createOrUpdateProject}
+        disabled={isProcessing}
         >
-           {isCreatingProject ? 'Creating...' : 'CREATE PROJECT'}
+           {isProcessing ? 'processing...' : action === 'create' ? 'CREATE PROJECT' : 'UPDATE PROJECT'}
         </button>
     )
 }else{
-    proceedToCreateProjectBtn = (
-        <button className='px-3 py-2 rounded-full bg-gray-200 text-gray-600 font-semibold text-md flex space-x-2 hover:drop-shadow-lg'
+    proceedToCreateOrUpdateProjectBtn = (
+        <button className='p-3 rounded bg-gray-200 text-gray-600 font-semibold text-md flex space-x-2 hover:drop-shadow-lg'
         disabled>
-            CREATE PROJECT
+            {action === 'create' ? 'CREATE PROJECT' : 'UPDATE PROJECT'}
         </button>
     )
 }
@@ -81,8 +83,8 @@ if(!isEmpty(title)){
             <div className='flex items-center justify-between'>
 
                 <div className='flex space-x-1 items-center'>
-                    <FolderAddIcon className='w-7 h-7 text-yellow-500'/>
-                    <span className='text-lg font-semibold md:font-bold'>New Project</span>
+                    {action === "create" ? <FolderAddIcon className='w-7 h-7 text-yellow-500'/> : <FolderIcon className='w-7 h-7 text-yellow-500'/>}
+                    <span className='text-lg font-semibold md:font-bold'>{action === "create" ? 'New Project' : 'Edit Project'}</span>
                 </div>
 
                 <XIcon className='w-6 h-6 cursor-pointer ' onClick={close} />
@@ -140,7 +142,7 @@ if(!isEmpty(title)){
 
                                     <div className='flex flex-col w-full md:w-1/3 gap-1'>
                                         <label className='text-md font-semibold text-gray-500'>Project status</label>
-                                        <select className='border border-slate-200 rounded p-2'
+                                        <select className='border border-slate-200 rounded p-2 outline-none'
                                         name='status'
                                         value={status} 
                                         onChange={(e) => setStatus(e.target.value) }
@@ -188,7 +190,7 @@ if(!isEmpty(title)){
                             </div>
 
                            <div className='mt-5 flex justify-center'>
-                                {proceedToCreateProjectBtn}
+                                {proceedToCreateOrUpdateProjectBtn}
                            </div>
                             
                     </div>
@@ -200,4 +202,4 @@ if(!isEmpty(title)){
   )
 }
 
-export default CreateProjectOverlay
+export default CreateOrUpdateProjectOverlay

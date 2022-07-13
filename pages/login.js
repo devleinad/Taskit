@@ -1,11 +1,11 @@
-import { getCsrfToken, getSession, signIn } from 'next-auth/react'
+import { getSession, signIn } from 'next-auth/react'
 import React, { useState } from 'react';
 import Head from 'next/head';
 import { isEmpty } from '../helpers';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
-function Login({csrfToken}) {
+function Login({}) {
     const [email,setEmailAddress] = useState('');
     const [password,setPassword] = useState('');
     const [error,setError] = useState(null);
@@ -36,8 +36,8 @@ function Login({csrfToken}) {
                     callbackUrl:window.location.origin
                 });
 
-                if(signinRes.url === "//"){
-                    router.push('//app/');
+                if(signinRes.url === "http://localhost:3000"){
+                    router.push('/app/');
                 }
 
         } catch (error) {
@@ -113,15 +113,14 @@ export const getServerSideProps = async (context) => {
     if(session){
         return {
             redirect:{
-                destination:'//',
+                destination:'/app/projects/',
                 permanent:false
             }
         }
     }
     else{
-        const csrfToken = await getCsrfToken(context);
         return {
-            props:{csrfToken}
+            props:{}
         }
     }
 }

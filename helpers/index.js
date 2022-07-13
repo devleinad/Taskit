@@ -44,7 +44,21 @@ export const createProject = (data) => {
                 'Content-Type':'application/json',
                 'Access-Control-Allow-Origin':"/",
                 'Access-Control-Allow-Headers':'*',
-                'Access-Control-Allow-Methods':'METHOD'
+                'Access-Control-Allow-Methods':'POST'
+            }
+    });
+    return apiResponse;
+}
+
+
+export const updateProject = (id,data) => {
+    const apiResponse = axios.patch(`/api/projects/${id}/`,data, {
+        withCredentials:true,
+            headers:{
+                'Content-Type':'application/json',
+                'Access-Control-Allow-Origin':"/",
+                'Access-Control-Allow-Headers':'*',
+                'Access-Control-Allow-Methods':'PATCH'
             }
     });
     return apiResponse;
@@ -52,12 +66,14 @@ export const createProject = (data) => {
 
 
 export const deleteProject = (data) => {
-    const apiResponse = axios.delete(`http://localhost:3000/api/projects/delete`,{
+    const apiResponse = axios.delete(`/api/projects/delete`,{
         data:JSON.stringify(data),
         withCredentials:true,
         headers:{
             'Content-Type':'application/json',
-            'Access-Control-Allow-Origin':"*"
+             'Access-Control-Allow-Origin':"/",
+            'Access-Control-Allow-Origin':"*",
+            'Access-Control-Allow-Methods':'DELETE'
         }
     });
     return apiResponse;
@@ -65,10 +81,13 @@ export const deleteProject = (data) => {
 
 
 export const updateProjectTitleOrDescription = (id,data) => {
-    const apiResponse = axios.patch(`/api/projects/${id}`,data,{
+    const apiResponse = axios.put(`/api/projects/${id}`,data,{
         withCredentials:true,
-        headers:{
-            'Access-Control-Allow-Origin':"*"
+         headers:{
+            'Content-Type':'application/json',
+            'Access-Control-Allow-Origin':"/",
+            'Access-Control-Allow-Headers':'*',
+            'Access-Control-Allow-Methods':'PUT'
         }
     });
     return apiResponse;

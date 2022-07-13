@@ -1,7 +1,23 @@
 import Head from 'next/head'
+import { useEffect } from 'react'
 
-export default function Home(props) {
-  console.log(props);
+export default function Home() {
+
+  function sendMail() {
+    var link = "mailto:peprahdaniel.dp@gmail.com"
+             + "?cc=myCCaddress@example.com"
+             + "&subject=" + encodeURIComponent("This is my subject")
+             + "&body=" + encodeURIComponent(document.getElementById('myText').value)
+    ;
+    
+    window.location.href = link;
+}
+
+
+  // useEffect(() => {
+  //   window.open('mailto:peprahdaniel.dp@gmail.com.com?subject=subject&body=body');
+  // },[]);
+
   return (
     <div>
       <Head>

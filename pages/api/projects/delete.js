@@ -6,7 +6,7 @@ export default async function handler(req,res){
     const {isAuthenticated,user} = await authenticate(req);
 
     if(isAuthenticated){
-
+        if(req.method === "DELETE"){
         const db = await connect();
         const {projects} = req.body;
         projects.forEach((projectId) => {
@@ -14,6 +14,10 @@ export default async function handler(req,res){
         });
         
          return res.status(201).json({success:true});
+        }else{
+            res.status(405);
+        }
+       
        
     }else{
         return res.status(401).json({error:'Unauthenticated'});
