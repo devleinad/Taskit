@@ -31,7 +31,7 @@ const Navbar = ({user}) => {
       return () => window.removeEventListener('resize', handleResize);
 
 
-    },[]);
+    });
 
     useEffect(() => {
       if(screenSize <= 900){
