@@ -1,12 +1,12 @@
-import { getCsrfToken, getSession, signIn } from 'next-auth/react'
+import { getSession, signIn } from 'next-auth/react'
 import React, { useState } from 'react';
 import Head from 'next/head';
-import { isConfirmed, isEmpty } from '../helpers';
+import { isConfirmed, isEmpty } from '../../helpers';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { XIcon } from '@heroicons/react/outline';
 
-function Signup({csrfToken}) {
+function Signup({}) {
     const [fullName,setFullName] = useState('');
     const [email,setEmailAddress] = useState('');
     const [companyName,setCompanyName] = useState('');
@@ -68,7 +68,6 @@ function Signup({csrfToken}) {
         } catch (error) {
             setError(true);
             setIsSigningUp(false);
-            console.log(error.message);
         }
         
         
@@ -182,9 +181,8 @@ export const getServerSideProps = async (context) => {
         }
     }
     else{
-        const csrfToken = await getCsrfToken(context);
         return {
-            props:{csrfToken}
+            props:{}
         }
     }
 }
