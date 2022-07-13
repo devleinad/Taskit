@@ -36,13 +36,8 @@ function Login({}) {
                     callbackUrl:window.location.origin
                 });
 
-<<<<<<< HEAD
                 if(signinRes.url === "http://localhost:3000"){
                     router.push('/app/');
-=======
-                if(signinRes.url === "https://taskit-nine.vercel.app"){
-                    router.push('https://taskit-nine.vercel.app');
->>>>>>> bb8f93ea358fd17c8ae20e3c2fdb988a6d85bf6a
                 }
 
         } catch (error) {
