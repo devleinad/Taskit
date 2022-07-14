@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getSession } from 'next-auth/react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { ChevronRightIcon, FolderIcon, PlusIcon, SearchIcon, TrashIcon, XIcon } from '@heroicons/react/outline';
+import { ChevronRightIcon, FilterIcon, FolderIcon, PlusIcon, SearchIcon, TrashIcon, XIcon } from '@heroicons/react/outline';
 import Layout from '../../../components/Layout';
 import { getAllUserProjects,createProject, deleteProject, updateProjectTitleOrDescription, isEmpty, updateProject } from '../../../helpers';
 import { useContextState } from '../../../contexts/ContextProvider';
@@ -12,6 +12,7 @@ import DeleteActionModal from '../../../components/utilities/DeleteActionModal';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
+import ShowProjectOverlay from '../../../components/utilities/ShowProjectOverlay';
 
 const Index = ({user}) => {
   const [projects,setProjects] = useState([]);
@@ -19,8 +20,8 @@ const Index = ({user}) => {
   const [isLoading,setIsLoading] = useState(true);
   const [projectsSliceLimit,setProjectsSliceLimit] = useState(12);
   const [projectsQuerystatus,setProjectsQueryStatus] = useState('all');
-  const [projectsQuerySort,setProjectsQuerySort] = useState('desc');
-  const [projectsSortBy,setProjectsSortBy] = useState('_id');
+  const [projectsQuerySort,setProjectsQuerySort] = useState('asc');
+  const [projectsSortBy,setProjectsSortBy] = useState('title');
   const [projectsSearchTerm,setProjectsSearchTerm] = useState('');
   //details for creating projects
   const [isProcessing,setIsProcessing] = useState(false);
@@ -35,6 +36,7 @@ const Index = ({user}) => {
   const [deletableProjectsList,setDeletableProjectsLists] = useState([]);
   const [isDeletingMultipleSingleCheck,setIsDeletingMultipleSingleCheck] = useState(false);
   const [projectTobeUpdatedId,setProjectTobeUpdatedId] = useState(null);
+  const [projectToBeShown,setProjectToBeShown] = useState(null);
 
 
   const {isClicked,handleClick,handleClose} = useContextState();
@@ -44,7 +46,6 @@ const Index = ({user}) => {
  
 
   useEffect(() => {
-    setTimeout(() => {
     setError(false);
     getAllUserProjects(projectsQuerystatus,projectsQuerySort,projectsSortBy,projectsSearchTerm).then(res => {
       setProjects(res.data.projects);
@@ -54,7 +55,6 @@ const Index = ({user}) => {
       setIsLoading(false);
       notify('Something went wrong!','error');
     });
-    },1500);
   },[projectsQuerystatus,projectsSortBy,projectsQuerySort,projectsSearchTerm]);
 
   // we should be able to update the title and description of a particular project
@@ -118,23 +118,7 @@ const Index = ({user}) => {
        updateProject(projectTobeUpdatedId,data).then(res => {
         if(res.status === 201){
           const returnedProject = res.data.updatedProject;
-          console.log(returnedProject.title);
-          // const updatedProjects = projects.map(project => {
-          //   if(project._id === returnedProject._id){
-          //     return {
-          //       ...project,
-          //       title:returnedProject.title,
-          //       repColor:returnedProject.repColor,
-          //       status:returnedProject.status,
-          //       description:returnedProject.description,
-          //       dueDate:returnedProject.dueDate,
-          //       updatedAt:returnedProject.updatedAt,
-          //     }
-          //   }else{
-          //     return project;
-          //   }
-          // });
-      
+         
           setProjects(currentProjects => {
             const updatedProjects = currentProjects.map(project => {
               if(project._id === returnedProject._id){
@@ -151,8 +135,6 @@ const Index = ({user}) => {
                 return project;
               }
             });
-
-            console.log(updatedProjects);
 
             return updatedProjects;
           });
@@ -187,6 +169,7 @@ const Index = ({user}) => {
   //update a projects title or description
 
   const handleUpdateProjectByTitleOrDescription = (projectId,data) => {
+    console.log(projectId,data);
     setError(false);
     updateProjectTitleOrDescription(projectId,data).then(res => {
       if(res.status === 200){
@@ -265,23 +248,27 @@ const Index = ({user}) => {
     setShowDeleteActionModal(true);
   }
 
- 
+ //cancel delete action
   const cancelDeleteAction = () => {
     setShowDeleteActionModal(false);
   }
 
+   // add a project to the list of selected projects to be deleted
   const addToDeletableProjectsList = (id) => {
     setDeletableProjectsLists(previousList => {
       return [...previousList,id];
     })
   }
 
+
+  // remove a project from the list of selected projects to be deleted
   const removeFromDeletableProjectsList = (id) => {
     const filteredProjects = deletableProjectsList.filter(value => value !== id);
     setDeletableProjectsLists(filteredProjects);
   }
 
 
+  // we must check to select all projects, and uncheck to remove all selected projects
   const toggleMultipleProjectsDeletion = (e) => {
     if(e.target.checked){
       setIsDeletingMultipleSingleCheck(true);
@@ -294,12 +281,17 @@ const Index = ({user}) => {
         })
       }
     }else{
-      setDeletableProjectsLists([]);
+      const elements = document.getElementsByClassName('project-select-box');
+      for(var i = 0; i < elements.length; i++){
+        elements[i].checked = false;
+        setDeletableProjectsLists([]);
+      }
       setIsDeletingMultipleSingleCheck(false);
     }
   }
 
 
+  // we must set project details for the project to be updated before showing the overlay
   const handleSetProjectDetailsForUpdate = (project) => {
     setAction('update');
     const {_id,title,description,status,dueDate,repColor} = project;
@@ -310,6 +302,12 @@ const Index = ({user}) => {
     setRepColor(repColor);
     setProjectTobeUpdatedId(_id);
     handleClick('createOrUpdateProjectOverlay');
+  }
+
+
+  //we should be able to hide the overlay
+  const hideShownProject = () => {
+    setProjectToBeShown(null);
   }
 
 
@@ -338,8 +336,12 @@ const Index = ({user}) => {
               customActionFunc={handleDeleteProject} />
               }
 
+              {
+                projectToBeShown && <ShowProjectOverlay project={projectToBeShown} hideOverlay={hideShownProject}/>
+              }
+
            
-              <div className='relative flex flex-col'>
+              <div className='relative flex flex-col bg-white rounded p-2 border border-slate-100'>
                   <div className='flex items-center space-x-2'>
                     <FolderIcon className='w-8 h-8'/> {' '}
                     <span className=' text-2xl font-semibold'>Projects</span>
@@ -356,11 +358,11 @@ const Index = ({user}) => {
                   </div>
               </div>
 
-              <div className='mt-6 flex justify-between w-full'>
+              <div className='mt-4 flex justify-end w-full'>
                 
                   
                   <button type='button' 
-                  className='px-2 py-1 bg-blue-500 rounded text-white text-sm font-semibold flex items-center justify-center  transition duration-50 hover:bg-blue-600 hover:drop-shadow-lg'
+                  className='p-2 bg-blue-500 rounded text-white text-sm font-semibold flex items-center justify-center  transition duration-50 hover:bg-blue-600 hover:drop-shadow-lg'
                   onClick={() => {
                     setAction('create');
                     handleClick('createOrUpdateProjectOverlay')
@@ -400,13 +402,22 @@ const Index = ({user}) => {
                  <div className='mt-4 border border-slate-100 overflow-x-auto md:overflow-x-none'>
                   
                    <div className='flex justify-between items-center px-2 border-b border-b-slate-100'>
-                      <button className={`flex items-center outline-none ${deletableProjectsList.length > 0 ? 'text-red-500' : 'text-gray-400'}`}
+                    <div className='flex items-center gap-2'>
+                         <button className={`flex items-center outline-none ${deletableProjectsList.length > 0 ? 'text-red-500' : 'text-gray-400'}`}
                        disabled={deletableProjectsList.length === 0 && true}
                        onClick={initiateProjectDeleteAction}
                        >
                           <TrashIcon className='w-3 h-3'/>
                           <span className='text-xs font-semibold'>Delete</span>
                       </button>
+                       <button type='button' className='flex justify-center items-center px-2'>
+                        <FilterIcon className='w-3 h-3' />
+                        <span className='text-xs font-semibold'>Filter</span>
+                      </button>
+                    </div>
+                     
+
+                     
                     
                       <div className='flex gap-3 items-center  bg-inherit px-2 py-1 rounded w-fit'>
                         <SearchIcon className='w-4 h-4 text-gray-400'/>
@@ -439,11 +450,11 @@ const Index = ({user}) => {
                         Status
                      </div>
 
-                     <div className='hidden md:inline-block project-due-date-header text-center p-2'>
+                     <div className='hidden md:inline-block project-due-date-header p-2'>
                         Due date
                      </div>
 
-                     <div className='project-actions-header text-center p-2'>
+                     <div className='project-actions-header p-2'>
                         Actions
                      </div>
                    </div>
@@ -451,7 +462,7 @@ const Index = ({user}) => {
                      {
                       isLoading && (
                         <div className='flex justify-center items-center p-2'>
-                            <div className='font-bold text-md py-2'>Loading...</div>
+                            <div className='text-slate-400 font-semibold text-sm py-2'>Loading...</div>
                         </div>
                       )
                     }
@@ -475,6 +486,7 @@ const Index = ({user}) => {
                         addToDeletableProjectsList={addToDeletableProjectsList}
                         removeFromDeletableProjectsList={removeFromDeletableProjectsList}
                         handleSetProjectDetailsForUpdate={handleSetProjectDetailsForUpdate}
+                        showProject={setProjectToBeShown}
                         />
                       ))
                    }

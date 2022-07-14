@@ -8,7 +8,8 @@ export const Project = ({
   addToDeletableProjectsList,
   removeFromDeletableProjectsList,
   handleSetProjectDetailsForUpdate,
-  changeTitleOrDescription
+  changeTitleOrDescription,
+  showProject
 }) => {
     const [isTitleUpdated,setIsTitleUpdated] = useState(false);
     const [isDescriptionUpdated,setIsDescriptionUpdated] = useState(false);
@@ -17,7 +18,6 @@ export const Project = ({
 
     const handleUpdateProjectTitleOrDescription = (column) => {
         if(column === "title"){
-            const data = {title:project?.title};
             if(isTitleUpdated){
               updateProject(project?._id,data);
               setIsTitleUpdated(false);
@@ -28,7 +28,7 @@ export const Project = ({
 
        if(column === "description"){
           const data = {description:project?.description};
-          if(isTitleUpdated){
+          if(isDescriptionUpdated){
               updateProject(project?._id,data);
               setIsDescriptionUpdated(false);
             }else{
@@ -42,7 +42,7 @@ export const Project = ({
   return (
     <div className='projects-body-grid bg-white text-xs md:text-sm font-semibold text-gray-500 border-b border-b-slate-100 last:border-b-0'>
         <div className='project-check-all-body p-2'>
-            <input type={'checkbox'} className='py-1 project-select-box' data-id={project?._id} onClick={(e) => {
+            <input type={'checkbox'} className='py-1 project-select-box outline-none' data-id={project?._id} onClick={(e) => {
               if(e.target.checked){
                 addToDeletableProjectsList(project?._id);
               }else{
@@ -99,9 +99,11 @@ export const Project = ({
            {project.dueDate && moment(project?.dueDate).format('D MMM, YYYY')}
         </div>
 
-        <div className='flex  p-2 text-center  font-normal items-center justify-center gap-2'>
+        <div className='flex p-2 font-normal items-center gap-2'>
             <button type='button' className='bg-blue-500 px-2 py-1 rounded text-xs font-normal 
-            text-white flex justify-center items-center hover:bg-blue-700' title='View'>
+            text-white flex justify-center items-center hover:bg-blue-700' title='View'
+            onClick={() => showProject(project)}
+            >
               <EyeIcon className='w-4 h-4'/>
             </button>
             <button type='button' className='bg-green-500  px-2 py-1 rounded text-xs font-normal 

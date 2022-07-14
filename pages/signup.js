@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { XIcon } from '@heroicons/react/outline';
 
-function Signup({csrfToken}) {
+function Signup({}) {
     const [fullName,setFullName] = useState('');
     const [email,setEmailAddress] = useState('');
     const [companyName,setCompanyName] = useState('');
@@ -182,9 +182,8 @@ export const getServerSideProps = async (context) => {
         }
     }
     else{
-        const csrfToken = await getCsrfToken(context);
         return {
-            props:{csrfToken}
+            props:{}
         }
     }
 }
