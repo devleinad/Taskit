@@ -17,7 +17,6 @@ import {
   getAllUserProjects,
   createProject,
   deleteProject,
-  updateProjectTitleOrDescription,
   isEmpty,
   updateProject,
 } from "../../helpers";
