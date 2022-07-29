@@ -46,11 +46,11 @@ function Login({}) {
         callbackUrl: window.location.origin,
       });
 
-      if (signinRes.url === "http://localhost:3000") {
+      if (signinRes.url === "https://taskit-alpha.vercel.app/") {
         router.push("/");
       }
     } catch (error) {
-      console.log(error);
+      setError("Login failed");
     }
   };
 

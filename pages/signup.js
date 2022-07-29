@@ -75,8 +75,8 @@ function Signup({}) {
           callbackUrl: window.location.origin,
         });
 
-        if (signinRes.url === "https://taskit-nine.vercel.app") {
-          router.push("https://taskit-nine.vercel.app/");
+        if (signinRes.url === "https://taskit-alpha.vercel.app/") {
+          router.push("/");
         }
       }
     } catch (error) {
