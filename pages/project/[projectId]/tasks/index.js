@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { getSession } from "next-auth/react";
-import Layout from "../../../../components/Layout";
+import Layout from "../../../../../components/Layout";
 import Head from "next/head";
 import {
   ChevronRightIcon,
@@ -14,8 +14,8 @@ import {
   TrashIcon,
   XIcon,
 } from "@heroicons/react/outline";
-import { useContextState } from "../../../../contexts/ContextProvider";
-import CreateOrUpdateTaskOverlay from "../../../../components/utilities/CreateOrUpdateTaskOverlay";
+import { useContextState } from "../../../../../contexts/ContextProvider";
+import CreateOrUpdateTaskOverlay from "../../../../../components/utilities/CreateOrUpdateTaskOverlay";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import {
@@ -23,11 +23,11 @@ import {
   updateTask,
   deleteTask,
   createTask,
-} from "../../../../helpers";
-import Task from "../../../../components/utilities/Task";
-import ActionMessge from "../../../../components/ActionMessge";
-import ShowTaskOverlay from "../../../../components/utilities/ShowTaskOverlay";
-import ActionModal from "../../../../components/utilities/ActionModal";
+} from "../../../../../helpers";
+import Task from "../../../../../components/utilities/Task";
+import ActionMessge from "../../../../../components/ActionMessge";
+import ShowTaskOverlay from "../../../../../components/utilities/ShowTaskOverlay";
+import ActionModal from "../../../../../components/utilities/ActionModal";
 
 const Index = ({ user }) => {
   const [isLoading, setIsLoading] = useState(true);
