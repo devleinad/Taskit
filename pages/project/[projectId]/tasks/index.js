@@ -14,7 +14,7 @@ import {
   TrashIcon,
   XIcon,
 } from "@heroicons/react/outline";
-import { useContextState } from "../../../../../contexts/ContextProvider";
+
 import CreateOrUpdateTaskOverlay from "../../../../../components/utilities/CreateOrUpdateTaskOverlay";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
@@ -23,11 +23,12 @@ import {
   updateTask,
   deleteTask,
   createTask,
-} from "../../../../../helpers";
-import Task from "../../../../../components/utilities/Task";
-import ActionMessge from "../../../../../components/ActionMessge";
-import ShowTaskOverlay from "../../../../../components/utilities/ShowTaskOverlay";
-import ActionModal from "../../../../../components/utilities/ActionModal";
+} from "../../../../helpers";
+import Task from "../../../../components/utilities/Task";
+import ActionMessge from "../../../../components/ActionMessge";
+import ShowTaskOverlay from "../../../../components/utilities/ShowTaskOverlay";
+import ActionModal from "../../../../components/utilities/ActionModal";
+import { useContextState } from "../../../../contexts/ContextProvider";
 
 const Index = ({ user }) => {
   const [isLoading, setIsLoading] = useState(true);

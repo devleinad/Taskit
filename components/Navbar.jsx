@@ -47,7 +47,7 @@ const Navbar = ({ user }) => {
     } else {
       setIsSidebarOpen(true);
     }
-  }, [screenSize]);
+  }, [screenSize, setIsSidebarOpen]);
 
   return (
     <div className="flex justify-between items-center py-2 px-2">

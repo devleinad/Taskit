@@ -1,9 +1,9 @@
 import React from "react";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
-import Layout from "../../components/Layout";
-import { mainData } from "../../data";
+import { mainData } from "../data";
 import Link from "next/link";
+import Layout from "../components/Layout";
 
 const Index = ({ user }) => {
   return (
