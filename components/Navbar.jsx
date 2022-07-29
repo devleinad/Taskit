@@ -9,17 +9,9 @@ import {
 } from "@heroicons/react/outline";
 import React, { useEffect } from "react";
 import { useContextState } from "../contexts/ContextProvider";
-import {
-  AddOverlay,
-  ChatOverlay,
-  NotificationOverlay,
-  ProfileOverlay,
-} from "./utilities";
+
 import Charvatar from "./utilities/Charvatar";
 import NavButton from "./utilities/NavButton";
-import { Menu } from "@headlessui/react";
-import Link from "next/link";
-import { signOut } from "next-auth/react";
 
 const Navbar = ({ user }) => {
   const {
@@ -116,115 +108,6 @@ const Navbar = ({ user }) => {
             <ChevronDownIcon className="w-5 h-5 text-gray-400" />
           )}
         </div>
-
-        {/* <Menu.Items className="absolute bg-white w-full md:w-1/5 rounded shadow-xl p-2 h-fit md:right-5 top-14">
-              <Menu.Item>
-                <div className="flex items-start gap-2  border-b-2 border-b-slate-100 pb-3">
-                  <div className="w-auto">
-                    {user?.avatar ? (
-                      <img
-                        src={user?.avatar}
-                        className="w-9 h-9 rounded"
-                        alt="User profile"
-                      />
-                    ) : (
-                      <Charvatar
-                        text={user?.name}
-                        width={70}
-                        height={70}
-                        fontSize={"20px"}
-                        color="#ffffff"
-                        borderRadius="5px"
-                      />
-                    )}
-                  </div>
-
-                  <div className="flex flex-col gap-0">
-                    <p className="font-semibold text-md">{user?.name}</p>
-                    <p className="text-xs text-gray-400 font-semibold">
-                      {user?.email}
-                    </p>
-                    {user?.companyName && (
-                      <p className="font-semibold text-xs text-gray-400">
-                        {user?.companyName}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </Menu.Item>
-
-              <Menu.Item>
-                <Link href="/projects/create/">
-                  <div className="flex items-center gap-2 border-b border-b-slate-100 pb-3 mt-3">
-                    <div className="items-center bg-slate-50 p-1 rounded">
-                      <UserIcon className="w-8 h-8" />
-                    </div>
-                    <div className="flex flex-col gap-0">
-                      <p className="text-sm font-semibold">My Profile</p>
-                      <small className="font-semibold text-xs text-gray-400">
-                        Account Settings
-                      </small>
-                    </div>
-                  </div>
-                </Link>
-              </Menu.Item>
-
-              <Menu.Item>
-                <div className="flex items-center gap-2  border-b border-b-slate-100 pb-3 mt-3">
-                  <div className=" bg-cyan-50 items-center p-1 rounded">
-                    <BellIcon className="w-8 h-8" />
-                  </div>
-                  <div className="flex flex-col gap-0">
-                    <p className="text-sm font-semibold">Notifications</p>
-                    <small className="font-semibold text-xs text-gray-400">
-                      Read & unread notifications
-                    </small>
-                  </div>
-                </div>
-              </Menu.Item>
-
-              <Menu.Item>
-                <div className="flex items-center gap-2  border-b border-b-slate-100 pb-3">
-                  <div className="bg-blue-50 items-center p-1 rounded">
-                    <ChatIcon className="w-8 h-8" />
-                  </div>
-                  <div className="flex flex-col gap-0">
-                    <p className="text-sm font-semibold">My Inbox</p>
-                    <small className="font-semibold text-xs text-gray-400">
-                      Read & unread messages
-                    </small>
-                  </div>
-                </div>
-              </Menu.Item>
-
-              <Menu.Item>
-                <div
-                  className="flex items-center gap-2  border-b border-b-slate-100 pb-3 cursor-pointer"
-                  onClick={() => signOut()}
-                >
-                  <div className="bg-red-50 items-center p-1 rounded">
-                    <LogoutIcon className="w-8 h-8" />
-                  </div>
-                  <div className="flex flex-col gap-0">
-                    <p className="text-sm font-semibold text-red-300">Logout</p>
-                    <small className="font-semibold text-xs text-gray-400">
-                      Exit app
-                    </small>
-                  </div>
-                </div>
-              </Menu.Item>
-            </Menu.Items>
-          </Menu> */}
-
-        {/* {isClicked.addOverlay && <AddOverlay />}
-        {isClicked.notificationOverlay && <NotificationOverlay />}
-        {isClicked.chatOverlay && <ChatOverlay />}
-        {isClicked.profileOverlay && (
-          <ProfileOverlay
-            user={user}
-            closeOverlay={() => handleClose("profileOverlay")}
-          />
-        )} */}
       </div>
     </div>
   );
