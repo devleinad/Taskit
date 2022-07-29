@@ -5,10 +5,12 @@ import { connect } from "../../../lib/database/connection";
 
 export default NextAuth({
     session:{
-        jwt:true
+        jwt:true,
+        maxAge: 60 * 60 * 24
     },
     jwt:{
-        secret:process.env.NEXTAUTH_SECRET
+        secret:process.env.NEXTAUTH_SECRET,
+        maxAge: 60 * 60 * 24,
     },
     providers:[
         CredentialsProvider({
@@ -16,9 +18,10 @@ export default NextAuth({
             async authorize(credentials){
                 const {email,password} = credentials;
                 const db = await connect();
-                if(db.readyState){
+                if(db.readyState === 1){
 
                     const foundUser = await db.collection('users').findOne({email});
+
                     if(foundUser){
                         const passwordMatches = bcryptjs.compareSync(password,foundUser.password);
                         if(passwordMatches){
@@ -60,5 +63,8 @@ export default NextAuth({
             return session;
         }
     },
+    pages:{
+        signIn:"/signin",
+    }
    
 });

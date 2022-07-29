@@ -1,6 +1,8 @@
 import { ObjectId } from "mongodb";
-import { connect } from "../../../lib/database/connection";
-import { authenticate } from "../../../middleware/authenticate";
+import { connect } from "../../../../../lib/database/connection";
+import { authenticate } from "../../../../../middleware/authenticate";
+
+ObjectId;
 
 export default async function handler(req, res) {
   const {
@@ -12,11 +14,11 @@ export default async function handler(req, res) {
 
   if (isAuthenticated) {
     const db = await connect();
-    const { projects } = req.body;
-    projects.forEach((projectId) => {
-      db.collection("projects").deleteMany({
-        user_id: ObjectId(user?._id),
-        _id: ObjectId(projectId),
+    const { tasks } = req.body;
+    tasks.forEach((taskId) => {
+      db.collection("tasks").deleteMany({
+        _id: ObjectId(taskId),
+        project_id: ObjectId(req.query.projectId),
       });
     });
 

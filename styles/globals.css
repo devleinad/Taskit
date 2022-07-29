@@ -5,7 +5,7 @@
 
 :root{
   --overlay-bg:rgba(0,0,0,0.4);
-  --overlay-inner-width:600px;
+  --overlay-inner-width:500px;
 }
 
 @layer utilities{
@@ -27,7 +27,7 @@
   }
 
   .zindex-1001{
-    z-index:1001;
+    z-index:100;
   }
 
   .overlay-inner-width{
@@ -57,7 +57,8 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-    background-color: rgba(246, 246, 246, 0.1);
+    /* background-color: #fafbf2; */
+    /* background-color: rgba(247, 247, 247, 0.953); */
     /* color: #141414; */
 }
 
@@ -72,7 +73,8 @@ a {
 
 .projects-header-grid, .projects-body-grid{
   display: grid;
-  grid-template-columns: 3% 35% 25% 10% 15% 10%;
+  grid-template-columns: 3% 30% 25% 10% 10% 10% 8%;
+  grid-column-gap: 0.3rem;
   align-items: center;
 }
 
