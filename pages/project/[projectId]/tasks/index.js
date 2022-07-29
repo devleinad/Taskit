@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { getSession } from "next-auth/react";
-import Layout from "../../../../../components/Layout";
+import Layout from "../../../../components/Layout";
 import Head from "next/head";
 import {
   ChevronRightIcon,
@@ -15,7 +15,7 @@ import {
   XIcon,
 } from "@heroicons/react/outline";
 
-import CreateOrUpdateTaskOverlay from "../../../../../components/utilities/CreateOrUpdateTaskOverlay";
+import CreateOrUpdateTaskOverlay from "../../../../components/utilities/CreateOrUpdateTaskOverlay";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import {
