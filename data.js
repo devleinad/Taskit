@@ -13,7 +13,7 @@ export const mainData = [
     iconColor: "#ffffff",
     iconBg: "#398acc",
     count: 20,
-    link: "/projects",
+    link: "/projects/",
   },
   {
     title: "Tasks",
