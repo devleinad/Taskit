@@ -47,7 +47,7 @@ function Login({}) {
       });
 
       if (signinRes.url === "http://localhost:3000") {
-        router.push("/app/");
+        router.push("/");
       }
     } catch (error) {
       console.log(error);
@@ -128,7 +128,7 @@ export const getServerSideProps = async (context) => {
   if (session) {
     return {
       redirect: {
-        destination: "/app/projects/",
+        destination: "/",
         permanent: false,
       },
     };

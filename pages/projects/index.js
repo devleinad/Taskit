@@ -12,7 +12,7 @@ import {
   TrashIcon,
   XIcon,
 } from "@heroicons/react/outline";
-import Layout from "../../../components/Layout";
+import Layout from "../../components/Layout";
 import {
   getAllUserProjects,
   createProject,
@@ -20,17 +20,17 @@ import {
   updateProjectTitleOrDescription,
   isEmpty,
   updateProject,
-} from "../../../helpers";
-import { useContextState } from "../../../contexts/ContextProvider";
-import CreateOrUpdateProjectOverlay from "../../../components/utilities/CreateOrUpdateProjectOverlay";
-import { Project } from "../../../components/utilities/Project";
-import ActionModal from "../../../components/utilities/ActionModal";
+} from "../../helpers";
+import { useContextState } from "../../contexts/ContextProvider";
+import CreateOrUpdateProjectOverlay from "../../components/utilities/CreateOrUpdateProjectOverlay";
+import { Project } from "../../components/utilities/Project";
+import ActionModal from "../../components/utilities/ActionModal";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-import ShowProjectOverlay from "../../../components/utilities/ShowProjectOverlay";
-import Pagination from "../../../components/utilities/Pagination";
-import ActionMessge from "../../../components/ActionMessge";
+import ShowProjectOverlay from "../../components/utilities/ShowProjectOverlay";
+import Pagination from "../../components/utilities/Pagination";
+import ActionMessge from "../../components/ActionMessge";
 
 const Index = ({ user }) => {
   const [projects, setProjects] = useState([]);
@@ -485,7 +485,7 @@ const Index = ({ user }) => {
           <div className="flex items-center space-x-2">
             <div
               className="text-sm text-gray-400 hover:text-blue-500 cursor-pointer"
-              onClick={() => navigate("/app/")}
+              onClick={() => navigate("/")}
             >
               Home
             </div>

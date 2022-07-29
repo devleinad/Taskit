@@ -76,13 +76,12 @@ function Signup({}) {
         });
 
         if (signinRes.url === "https://taskit-nine.vercel.app") {
-          router.push("https://taskit-nine.vercel.app/app/");
+          router.push("https://taskit-nine.vercel.app/");
         }
       }
     } catch (error) {
       setError(true);
       setIsSigningUp(false);
-      console.log(error.message);
     }
   };
 
@@ -216,7 +215,7 @@ export const getServerSideProps = async (context) => {
   if (session) {
     return {
       redirect: {
-        destination: "/app/",
+        destination: "/",
         permanent: false,
       },
     };

@@ -42,7 +42,7 @@ const Sidebar = () => {
         )}
         <div className="flex flex-col justify-between mt-5">
           <div className="flex flex-col gap-4 text-sm">
-            <Link href={"/app/"}>
+            <Link href={"/"}>
               <div
                 className="flex items-center gap-3 py-1 rounded px-1 hover:bg-slate-100 cursor-pointer"
                 onClick={handleCloseSidebar}
@@ -52,7 +52,7 @@ const Sidebar = () => {
               </div>
             </Link>
 
-            <Link href={"/app/projects/"}>
+            <Link href={"/projects/"}>
               <div
                 className={`flex items-center gap-3 py-1 rounded px-1 hover:bg-slate-100 cursor-pointer`}
                 onClick={handleCloseSidebar}
