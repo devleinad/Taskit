@@ -90,17 +90,13 @@ const Navbar = ({ user }) => {
             <Charvatar
               width={35}
               height={35}
-              text={user?.fullName}
+              text={user?.name}
               fontSize={14}
               color="#ffffff"
             />
           )}
           <p className="hidden md:inline-block text-sm text-gray-400">
-            Hi,{" "}
-            <span className="font-bold">
-              {user?.fullName.split(" ")[0]} {" ."}
-              {user?.fullName.split(" ")[1].charAt(0)}
-            </span>
+            Hi, <span className="font-bold">{user?.name.split(" ")[0]}</span>
           </p>
           {isClicked.profileOverlay ? (
             <ChevronUpIcon className="w-5 h-5 text-gray-400" />
