@@ -90,7 +90,7 @@ const Navbar = ({ user }) => {
             <Charvatar
               width={35}
               height={35}
-              text={user?.name}
+              text={user?.fullName}
               fontSize={14}
               color="#ffffff"
             />
