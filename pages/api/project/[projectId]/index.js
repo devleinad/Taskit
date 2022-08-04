@@ -3,8 +3,9 @@ import { authenticate } from "../../../../middleware/authenticate";
 import { ObjectId } from "mongodb";
 
 export default async function handler(req, res) {
-  const { projectId } = req.query;
   const { isAuthenticated, user } = await authenticate(req);
+  const { page, status, sort_order, sort_by, q, projectId } = req.query;
+
   if (isAuthenticated) {
     const db = await connect();
     const project = await db
@@ -12,9 +13,7 @@ export default async function handler(req, res) {
       .findOne({ _id: ObjectId(projectId), user_id: ObjectId(user?._id) });
 
     if (project) {
-      const { page, status, sort_order, sort_by, q } = req.query;
-
-      let convertedSortOrder, projects;
+      let convertedSortOrder;
 
       switch (sort_order) {
         case "desc":
@@ -38,7 +37,7 @@ export default async function handler(req, res) {
       // .find({ user_id: ObjectId(user?._id) })
       // .count();
       const maxNumberOfTasksPerPage = 10;
-      const offset = Math.floor((page - 1) * maxNumberOfTasksPerPage);
+      const offset = (page - 1) * maxNumberOfTasksPerPage;
       let projectTasks;
 
       if (!q) {
@@ -90,7 +89,7 @@ export default async function handler(req, res) {
               { $unwind: "$creator" },
             ])
             .skip(offset)
-            .limit(9)
+            .limit(maxNumberOfTasksPerPage)
             .toArray();
         } else {
           projectTasks = await db
@@ -139,7 +138,7 @@ export default async function handler(req, res) {
               { $unwind: "$creator" },
             ])
             .skip(offset)
-            .limit(9)
+            .limit(maxNumberOfTasksPerPage)
             .toArray();
         }
       } else {
@@ -192,7 +191,7 @@ export default async function handler(req, res) {
               { $unwind: "$creator" },
             ])
             .skip(offset)
-            .limit(9)
+            .limit(maxNumberOfTasksPerPage)
             .toArray();
         } else {
           projectTasks = await db
@@ -244,7 +243,7 @@ export default async function handler(req, res) {
               { $unwind: "$creator" },
             ])
             .skip(offset)
-            .limit(9)
+            .limit(maxNumberOfTasksPerPage)
             .toArray();
         }
       }

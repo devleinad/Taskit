@@ -57,7 +57,10 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-    /* background-color: #fafbf2; */
+    font-size: 14px;
+    line-height: 23px;
+    font-weight: 400;
+    /* background-color: #fbfafa; */
     /* background-color: rgba(247, 247, 247, 0.953); */
     /* color: #141414; */
 }

@@ -46,7 +46,7 @@ function Login({}) {
         callbackUrl: window.location.origin,
       });
 
-      if (signinRes.url === "https://taskit-alpha.vercel.app/") {
+      if (signinRes.status === 200) {
         router.push("/");
       }
     } catch (error) {

@@ -42,7 +42,7 @@ const Task = ({
   return (
     <div
       className="projects-body-grid text-xs md:text-sm font-semibold text-gray-500 border-b 
-    border-b-slate-100 last:border-b-0"
+    border-b-slate-100 last:border-b-0 even:bg-slate-50"
     >
       <div className="project-check-all-body px-2 py-1">
         <input

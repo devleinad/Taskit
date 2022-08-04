@@ -31,8 +31,8 @@ export default async function handler(req, res) {
     // .collection("projects")
     // .find({ user_id: ObjectId(user?._id) })
     // .count();
-    const maxNumberOfProjectsPerPage = 2;
-    const offset = Math.floor((page - 1) * maxNumberOfProjectsPerPage);
+    const maxNumberOfProjectsPerPage = 10;
+    const offset = (page - 1) * maxNumberOfProjectsPerPage;
 
     if (!q) {
       //we must fetch both active and completed statuses if the status query === all, else fetch either active or completed base on what is passed
@@ -83,7 +83,7 @@ export default async function handler(req, res) {
             { $unwind: "$creator" },
           ])
           .skip(offset)
-          .limit(9)
+          .limit(maxNumberOfProjectsPerPage)
           .toArray();
       } else {
         projects = await db
@@ -132,7 +132,7 @@ export default async function handler(req, res) {
             { $unwind: "$creator" },
           ])
           .skip(offset)
-          .limit(9)
+          .limit(maxNumberOfProjectsPerPage)
           .toArray();
       }
     } else {
@@ -185,7 +185,7 @@ export default async function handler(req, res) {
             { $unwind: "$creator" },
           ])
           .skip(offset)
-          .limit(9)
+          .limit(maxNumberOfProjectsPerPage)
           .toArray();
       } else {
         projects = await db
@@ -237,7 +237,7 @@ export default async function handler(req, res) {
             { $unwind: "$creator" },
           ])
           .skip(offset)
-          .limit(9)
+          .limit(maxNumberOfProjectsPerPage)
           .toArray();
       }
     }

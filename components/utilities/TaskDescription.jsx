@@ -7,7 +7,7 @@ const TaskDescription = ({ task }) => {
   return (
     <div className="relative mt-3">
       <dl>
-        <div className="px-4 py-5 flex space-x-4 sm:px-6">
+        <div className="px-4 py-5 flex space-x-4 sm:px-6 bg-slate-50">
           <dt className="text-sm font-medium text-gray-500">Title</dt>
           <dd className="text-sm text-gray-900 sm:mt-0 sm:col-span-2 ">
             {task?.task_title}
@@ -30,7 +30,7 @@ const TaskDescription = ({ task }) => {
           </dd>
         </div>
 
-        <div className="bg-gray-50 px-4 py-5 flex space-x-4 sm:px-6">
+        <div className="bg-slate-50 px-4 py-5 flex space-x-4 sm:px-6">
           <dt className="text-sm font-medium text-gray-500">Status</dt>
           <dd className="text-sm text-gray-900 sm:mt-0 sm:col-span-2">
             {task?.status}
@@ -46,7 +46,7 @@ const TaskDescription = ({ task }) => {
           </dd>
         </div>
 
-        <div className="even:bg-gray-50  px-4 py-5 flex space-x-4 sm:px-6">
+        <div className="bg-slate-50  px-4 py-5 flex space-x-4 sm:px-6">
           <dt className="text-sm font-medium text-gray-500">Due date</dt>
           <dd className="text-sm text-gray-900 sm:mt-0">
             {task.dueDate === new Date().toDateString()
@@ -64,7 +64,7 @@ const TaskDescription = ({ task }) => {
           </dd>
         </div>
 
-        <div className="even:bg-gray-50  px-4 py-5 flex space-x-4 sm:px-6">
+        <div className="bg-slate-50 px-4 py-5 flex space-x-4 sm:px-6">
           <dt className="text-sm font-medium text-gray-500">Updated at</dt>
           <dd className="text-sm text-gray-900 sm:mt-0">
             {task.updateAt && task?.createdAt !== task?.updateAt ? (

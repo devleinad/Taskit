@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
 import {
+  ChevronLeftIcon,
   ChevronRightIcon,
   ExclamationIcon,
   FilterIcon,
@@ -42,7 +43,8 @@ const Index = ({ user }) => {
   const [projectsSearchTerm, setProjectsSearchTerm] = useState("");
   const [activePage, setActivePage] = useState(1);
   const [totalUserProjectsCount, setTotalUserProjectsCount] = useState(null);
-  const itemsPerPage = 8;
+  const itemsPerPage = 10;
+  const [totalPagesCount, setTotalPagesCount] = useState(null);
 
   //details for creating projects
   const [isProcessing, setIsProcessing] = useState(false);
@@ -78,6 +80,9 @@ const Index = ({ user }) => {
         setTotalUserProjectsCount(res.data.totalUserProjectsCount);
         setActivePage(res.data.page);
         setProjects(res.data.projects);
+        setTotalPagesCount(
+          Math.ceil(res.data.totalUserProjectsCount / itemsPerPage)
+        );
         setIsLoading(false);
       })
       .catch(() => {
@@ -442,6 +447,14 @@ const Index = ({ user }) => {
     router.push(url);
   }
 
+  const handleLoadNextPageContent = function () {
+    setActivePage((previousActivePage) => Number(previousActivePage) + 1);
+  };
+
+  const handleLoadPreviousPageContent = function () {
+    setActivePage((previousActivePage) => Number(previousActivePage) - 1);
+  };
+
   if (error) throw new Error("Some thing went wrong");
 
   return (
@@ -497,7 +510,7 @@ const Index = ({ user }) => {
 
         <div className="mt-4 flex justify-between items-center w-full">
           <p className="text-gray-500 text-lg font-semibold">
-            Total {totalUserProjectsCount && `(${totalUserProjectsCount})`}
+            Projects Total {!isLoading && `(${totalUserProjectsCount})`}
           </p>
           <button
             type="button"
@@ -508,7 +521,8 @@ const Index = ({ user }) => {
             }}
           >
             <PlusIcon className="w-4 h-4 md:w-5 md:h-5 text-white" />
-            <span>Add Project</span>
+            Add
+            <span className="hidden md:inline">Project</span>
           </button>
         </div>
 
@@ -563,7 +577,7 @@ const Index = ({ user }) => {
               </button>
             </div>
 
-            <div className="flex gap-3 items-center  bg-slate-50 px-2 py-1 rounded ">
+            <div className="flex gap-3 items-center  bg-slate-50 px-2 py-1 rounded">
               <SearchIcon className="w-4 h-4 text-gray-400" />
               <input
                 type={"text"}
@@ -583,7 +597,7 @@ const Index = ({ user }) => {
           </div>
           <div
             className="projects-header-grid text-xs md:text-sm font-semibold 
-          text-gray-500 border-b border-slate-100 bg-white"
+          text-gray-500 border-b border-slate-100 bg-slate-50"
           >
             <div className="project-check-all-header p-2">
               <input
@@ -651,14 +665,32 @@ const Index = ({ user }) => {
             </>
           )}
 
-          {!isLoading && totalUserProjectsCount > itemsPerPage && (
-            <div className="flex justify-center">
-              <Pagination
-                activePage={activePage}
-                onChange={getUserProjects}
-                totalItemsCount={totalUserProjectsCount}
-                itemsCountPerPage={itemsPerPage}
-              />
+          {!isLoading && (
+            <div className="flex justify-between items-center py-4 px-2">
+              {totalPagesCount > 1 && (
+                <p className="text-xs md:text-md text-gray-500 font-normal">
+                  Showing page {activePage} / {totalPagesCount}
+                </p>
+              )}
+              {totalUserProjectsCount > itemsPerPage && (
+                <div className="flex justify-center items-center border rounded">
+                  <button
+                    className={`px-2 py-1 md:px-3 md:py-2 text-sm md:text-md font-normal border-r text-gray-500 flex items-center justify-center space-x-2`}
+                    onClick={handleLoadPreviousPageContent}
+                    disabled={Number(activePage) === 1}
+                  >
+                    <ChevronLeftIcon className="w-4 h-4" /> Previous
+                  </button>
+
+                  <button
+                    className="px-2 py-1 md:px-3 md:py-2 text-sm md:text-md font-normal text-gray-500 flex items-center justify-center space-x-2"
+                    onClick={handleLoadNextPageContent}
+                    disabled={Number(totalPagesCount) === 1}
+                  >
+                    Next <ChevronRightIcon className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

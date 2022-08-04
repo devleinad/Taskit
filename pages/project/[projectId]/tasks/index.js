@@ -5,6 +5,7 @@ import { getSession } from "next-auth/react";
 import Layout from "../../../../components/Layout";
 import Head from "next/head";
 import {
+  ChevronLeftIcon,
   ChevronRightIcon,
   ExclamationIcon,
   FilterIcon,
@@ -59,6 +60,8 @@ const Index = ({ user }) => {
   const [inputFillError, setInputFillError] = useState(null);
   const [activePage, setActivePage] = useState(1);
   const [totalTasksCount, setTotalTasksCount] = useState(null);
+  const itemsPerPage = 10;
+  const [totalPagesCount, setTotalPagesCount] = useState(null);
 
   const notify = (message, type) => toast(message, { type });
   useEffect(() => {
@@ -72,6 +75,9 @@ const Index = ({ user }) => {
         setProject(res.data.project);
         setTasks(res.data.tasks);
         setTotalTasksCount(res.data.totalProjectTasksCount);
+        setTotalPagesCount(
+          Math.ceil(Number(res.data.totalProjectTasksCount) / itemsPerPage)
+        );
         setIsLoading(false);
         setError(null);
       })
@@ -90,6 +96,7 @@ const Index = ({ user }) => {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    activePage,
     totalTasksCount,
     tasksQuerySort,
     tasksQueryStatus,
@@ -402,6 +409,14 @@ const Index = ({ user }) => {
     />
   );
 
+  const handleLoadNextPageContent = function () {
+    setActivePage((previousActivePage) => Number(previousActivePage) + 1);
+  };
+
+  const handleLoadPreviousPageContent = function () {
+    setActivePage((previousActivePage) => Number(previousActivePage) - 1);
+  };
+
   return (
     <>
       <Head>
@@ -468,7 +483,7 @@ const Index = ({ user }) => {
 
         <div className="mt-4 flex justify-between items-center w-full">
           <p className="text-gray-500 text-lg font-bold">
-            Total {totalTasksCount && `(${totalTasksCount})`}
+            Tasks Total {!isLoading && `(${totalTasksCount})`}
           </p>
           <button
             type="button"
@@ -478,7 +493,7 @@ const Index = ({ user }) => {
             }}
           >
             <PlusIcon className="w-4 h-4 md:w-5 md:h-5 text-white" />
-            <span>Add Task</span>
+            Add <span className="hidden md:inline">Task</span>
           </button>
         </div>
         {isClicked.createOrUpdateTaskOverlay && (
@@ -562,7 +577,7 @@ const Index = ({ user }) => {
 
           <div
             className="projects-header-grid text-xs md:text-sm font-semibold 
-          text-gray-500 border-b border-slate-100"
+          text-gray-500 border-b border-slate-100 even:bg-slate-50"
           >
             <div className="task-check-all-header p-2">
               <input
@@ -622,6 +637,35 @@ const Index = ({ user }) => {
                 />
               ))}
             </>
+          )}
+
+          {!isLoading && (
+            <div className="flex justify-between items-center py-4 px-2">
+              {totalPagesCount > 0 && (
+                <p className="text-xs md:text-md text-gray-500 font-normal">
+                  Showing page {activePage} / {totalPagesCount}
+                </p>
+              )}
+              {totalTasksCount > itemsPerPage && (
+                <div className="flex justify-center items-center border rounded">
+                  <button
+                    className={`px-2 py-1 md:px-3 md:py-2 text-sm md:text-md font-normal border-r text-gray-500 flex items-center justify-center space-x-2`}
+                    onClick={handleLoadPreviousPageContent}
+                    disabled={Number(activePage) === 1}
+                  >
+                    <ChevronLeftIcon className="w-4 h-4" /> Previous
+                  </button>
+
+                  <button
+                    className="px-2 py-1 md:px-3 md:py-2 text-sm md:text-md font-normal text-gray-500 flex items-center justify-center space-x-2"
+                    onClick={handleLoadNextPageContent}
+                    disabled={Number(totalPagesCount) === 1}
+                  >
+                    Next <ChevronRightIcon className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </Layout>

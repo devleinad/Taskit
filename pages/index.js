@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
 import { mainData } from "../data";
 import Link from "next/link";
 import Layout from "../components/Layout";
+import axios from "axios";
 
 const Index = ({ user }) => {
+  // useEffect(() => {
+  //   axios.get(`/api/`)
+  // },[]);
   return (
     <div>
       <Head>
