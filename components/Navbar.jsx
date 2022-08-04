@@ -98,8 +98,8 @@ const Navbar = ({ user }) => {
           <p className="hidden md:inline-block text-sm text-gray-400">
             Hi,{" "}
             <span className="font-bold">
-              {user?.name.split(" ")[0]} {" ."}
-              {user?.name.split(" ")[1].charAt(0)}
+              {user?.fullName.split(" ")[0]} {" ."}
+              {user?.fullName.split(" ")[1].charAt(0)}
             </span>
           </p>
           {isClicked.profileOverlay ? (
