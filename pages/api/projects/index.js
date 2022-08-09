@@ -6,11 +6,11 @@ export default async function handler(req, res) {
   const { isAuthenticated, user } = await authenticate(req);
   if (isAuthenticated) {
     const db = await connect();
-    const { page, status, sort_order, sort_by, q } = req.query;
+    const { page, status, order_by, sort_in, q } = req.query;
 
     let convertedSortOrder, projects;
 
-    switch (sort_order) {
+    switch (sort_in) {
       case "desc":
         convertedSortOrder = -1;
         break;
@@ -31,7 +31,7 @@ export default async function handler(req, res) {
     // .collection("projects")
     // .find({ user_id: ObjectId(user?._id) })
     // .count();
-    const maxNumberOfProjectsPerPage = 10;
+    const maxNumberOfProjectsPerPage = 8;
     const offset = (page - 1) * maxNumberOfProjectsPerPage;
 
     if (!q) {
@@ -47,7 +47,7 @@ export default async function handler(req, res) {
             },
 
             {
-              $sort: { [sort_by]: convertedSortOrder },
+              $sort: { [order_by]: convertedSortOrder },
             },
 
             {
@@ -97,7 +97,7 @@ export default async function handler(req, res) {
             },
 
             {
-              $sort: { [sort_by]: convertedSortOrder },
+              $sort: { [order_by]: convertedSortOrder },
             },
 
             {
@@ -152,7 +152,7 @@ export default async function handler(req, res) {
               },
             },
             {
-              $sort: { [sort_by]: convertedSortOrder },
+              $sort: { [order_by]: convertedSortOrder },
             },
             {
               $lookup: {
@@ -204,7 +204,7 @@ export default async function handler(req, res) {
               },
             },
             {
-              $sort: { [sort_by]: convertedSortOrder },
+              $sort: { [order_by]: convertedSortOrder },
             },
             {
               $lookup: {

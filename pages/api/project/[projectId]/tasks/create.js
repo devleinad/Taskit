@@ -41,6 +41,14 @@ export default async function handler(req, res) {
         const task = await db
           .collection("tasks")
           .findOne({ _id: ObjectId(createTask?.insertedId) });
+        //increase project_tasks count
+        const updateProjectTasksCount = await db
+          .collection("projects")
+          .findOneAndUpdate(
+            { _id: ObjectId(projectId) },
+            { $set: { tasksCount: project?.tasksCount + 1 } }
+          );
+        console.log(updateProjectTasksCount);
         return res.status(201).json({ success: true, task });
       } else {
         return res.status(500).json({ message: "Something went wrong" });

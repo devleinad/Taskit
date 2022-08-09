@@ -55,14 +55,19 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-    font-size: 14px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  /* font-family: 'Montserrat', sans-serif; */
+  /* font-family: 'Poppins', sans-serif; */
+  /* font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif; */
+    font-size: 13px;
     line-height: 23px;
     font-weight: 400;
+    color: #000000;
     /* background-color: #fbfafa; */
-    /* background-color: rgba(247, 247, 247, 0.953); */
+    /* background-color: rgba(251, 250, 250, 0.953); */
     /* color: #141414; */
+    /* background-color: #0f5c7b; */
 }
 
 a {
@@ -74,9 +79,13 @@ a {
   box-sizing: border-box;
 }
 
-.projects-header-grid, .projects-body-grid{
+.sidebar{
+  width: 230px;
+}
+
+.projects-header-grid, .projects-body-grid, .tasks-header-grid,.tasks-body-grid{
   display: grid;
-  grid-template-columns: 3% 30% 25% 10% 10% 10% 8%;
+  grid-template-columns: 5% 30% 25% 10% 10% 10% 6%;
   grid-column-gap: 0.3rem;
   align-items: center;
 }
@@ -86,6 +95,10 @@ a {
     display: grid;
     grid-template-columns: 10% 60% 20%;
     align-items: center;
+  }
+
+  .sidebar{
+    width: 90%;
   }
 
 }

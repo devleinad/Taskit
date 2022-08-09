@@ -27,6 +27,7 @@ export default async function handler(req, res) {
           description,
           createdAt: new Date().toString(),
           updateAt: new Date().toString(),
+          tasksCount: 0,
         });
 
         if (newProject.acknowledged) {

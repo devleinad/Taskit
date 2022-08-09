@@ -1,15 +1,42 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
 import { mainData } from "../data";
 import Link from "next/link";
 import Layout from "../components/Layout";
 import axios from "axios";
+import { Router } from "next/router";
+import DashboardCol from "../components/utilities/DashboardCol";
+import { FolderIcon, UsersIcon } from "@heroicons/react/outline";
 
 const Index = ({ user }) => {
-  // useEffect(() => {
-  //   axios.get(`/api/`)
-  // },[]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userProjectsCount, setUseProjectsCount] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get(`/api/details`)
+      .then((res) => {
+        if (res.status === 200) {
+          setUseProjectsCount(res.data.userProjectsCount);
+          setIsLoading(false);
+        }
+      })
+      .catch((error) => {
+        if (error) {
+          if (error.response.status === 500) {
+            setError("Something went wrong!");
+            setIsLoading(false);
+          }
+
+          if (error.response.status === 401) {
+            setIsLoading(false);
+            Router.push("/login");
+          }
+        }
+      });
+  }, []);
   return (
     <div>
       <Head>
@@ -22,42 +49,34 @@ const Index = ({ user }) => {
       </Head>
 
       <Layout user={user && user}>
-        <h1 className="text-2xl md:text-3xl tracking-tight">
-          Welcome, <span className="font-semibold">{user?.name}</span>
-        </h1>
-        <p className="text-gray-500 text-sm font-semibold">
-          All your projects and tasks are intact.
-        </p>
+        <div className="bg-white p-3">
+          <h1 className="text-2xl md:text-3xl tracking-tight">
+            Hello, <span className="font-semibold">{user?.name}</span>
+          </h1>
+          <p className="text-gray-400 text-sm font-normal">
+            All your projects and tasks are intact.
+          </p>
+        </div>
 
-        <div className="flex flex-wrap justify-center items-center gap-3 md:p-2 mt-5">
-          {mainData.map((data) => (
-            <Link key={data.title} href={data.link}>
-              <div className="border border-slate-100 bg-white flex gap-4 items-center px-4 py-6 w-full md:w-56 rounded-lg cursor-pointer hover:shadow-lg">
-                <div>
-                  <button
-                    type="button"
-                    className="rounded-full opacity-0.9 text-lg p-4"
-                    style={{
-                      color: data.iconColor,
-                      backgroundColor: data.iconBg,
-                    }}
-                  >
-                    {data.icon}
-                  </button>
-                </div>
-                <div>
-                  <p className="font-semibold text-lg text-gray-500">
-                    {data.title}
-                  </p>
-
-                  <p className="mt-1 text-gray-400 font-semibold text-md text-center px-2 py-1 bg-slate-100 rounded-full">
-                    {data.count > 100 ? "100" : data.count}
-                    {data.count > 100 && <span className="font-bold">+</span>}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          ))}
+        <div className="flex justify-center items-center gap-3 md:p-2 mt-5">
+          <DashboardCol
+            title={"Projects"}
+            icon={<FolderIcon className="w-8 h-8 md:w-12 md:h-12" />}
+            iconColor="#ffffff"
+            iconBg={"#398acc"}
+            count={userProjectsCount}
+            link={"/projects"}
+            classes="border border-slate-100 bg-white flex justify-between items-center px-4 py-6 w-full md:w-[250px] rounded-lg cursor-pointer hover:shadow-lg"
+          />
+          <DashboardCol
+            title={"Members"}
+            icon={<UsersIcon className="w-8 h-8 md:w-12 md:h-12" />}
+            iconColor="#ffffff"
+            iconBg={"#e95656"}
+            count={0}
+            link={"/members"}
+            classes="border border-slate-100 bg-white flex justify-between items-center px-4 py-6 w-full md:w-[250px] rounded-lg cursor-pointer hover:shadow-lg"
+          />
         </div>
       </Layout>
     </div>

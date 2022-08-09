@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 
 export default async function handler(req, res) {
   const { isAuthenticated, user } = await authenticate(req);
-  const { page, status, sort_order, sort_by, q, projectId } = req.query;
+  const { page, status, order_by, sort_in, q, projectId } = req.query;
 
   if (isAuthenticated) {
     const db = await connect();
@@ -15,7 +15,7 @@ export default async function handler(req, res) {
     if (project) {
       let convertedSortOrder;
 
-      switch (sort_order) {
+      switch (sort_in) {
         case "desc":
           convertedSortOrder = -1;
           break;
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
               },
 
               {
-                $sort: { [sort_by]: convertedSortOrder },
+                $sort: { [order_by]: convertedSortOrder },
               },
 
               {
@@ -103,7 +103,7 @@ export default async function handler(req, res) {
               },
 
               {
-                $sort: { [sort_by]: convertedSortOrder },
+                $sort: { [order_by]: convertedSortOrder },
               },
 
               {

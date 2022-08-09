@@ -5,7 +5,7 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   MenuIcon,
-  PlusCircleIcon,
+  UserAddIcon,
 } from "@heroicons/react/outline";
 import React, { useEffect } from "react";
 import { useContextState } from "../contexts/ContextProvider";
@@ -42,7 +42,7 @@ const Navbar = ({ user }) => {
   }, [screenSize, setIsSidebarOpen]);
 
   return (
-    <div className="flex justify-between items-center py-2 px-2">
+    <div className="flex justify-between items-center py-2 px-2 bg-white border-b border-b-slate-100">
       <NavButton
         icon={<MenuIcon className="w-6 h-6" />}
         customFunc={() => setIsSidebarOpen((previousState) => !previousState)}
@@ -50,9 +50,10 @@ const Navbar = ({ user }) => {
 
       <div className="flex space-x-3">
         <NavButton
-          icon={<PlusCircleIcon className="w-6 h-6" />}
+          icon={<UserAddIcon className="w-6 h-6" />}
           color={"#03C9D7"}
           customFunc={() => handleClick("addOverlay")}
+          title={"Invite members"}
         />
 
         <NavButton
@@ -88,8 +89,8 @@ const Navbar = ({ user }) => {
             />
           ) : (
             <Charvatar
-              width={35}
-              height={35}
+              width={30}
+              height={30}
               text={user?.name}
               fontSize={14}
               color="#ffffff"

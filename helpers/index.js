@@ -23,14 +23,14 @@ export const checkEmailAvailability = async (email) => {
 export const getAllUserProjects = async (
   page,
   status,
-  sortOrder,
-  sortBy,
+  order_by,
+  sort_in,
   searchTerm
 ) => {
   const apiResponse = await axios.get(
     `/api/projects/?page=${Number(
       page
-    )}&status=${status}&sort_order=${sortOrder}&sort_by=${sortBy}&q=${searchTerm}`,
+    )}&status=${status}&order_by=${order_by}&sort_in=${sort_in}&q=${searchTerm}`,
     {
       withCredentials: true,
       headers: {

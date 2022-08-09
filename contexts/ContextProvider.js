@@ -10,6 +10,8 @@ const initialState = {
   createOrUpdateProjectOverlay: false,
   deleteActionOverlay: false,
   createOrUpdateTaskTaskOverlay: false,
+  showSidebarMembers: true,
+  showFilterOptionsOverlay: false,
 };
 const ContextProvider = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);

@@ -20,7 +20,7 @@ function Layout({ user, children }) {
       <div className="pb-10 md:pb-0">
         {isSidebarOpen && (
           <div
-            className="fixed w-55 min-h-screen border border-r-slate-50 bg-white"
+            className="fixed min-h-screen bg-[#004F6D] px-0 sidebar"
             style={{ zIndex: 100 }}
           >
             <Sidebar />
@@ -42,9 +42,7 @@ function Layout({ user, children }) {
               />
             )}
           </div>
-          <main className="mx-2 md:p-3" style={{ zIndex: 90 }}>
-            {children}
-          </main>
+          <main style={{ zIndex: 90 }}>{children}</main>
         </div>
       </div>
     </React.Fragment>

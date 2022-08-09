@@ -42,9 +42,9 @@ const Task = ({
   return (
     <div
       className="projects-body-grid text-xs md:text-sm font-semibold text-gray-500 border-b 
-    border-b-slate-100 last:border-b-0 even:bg-slate-50"
+    border-b-slate-100 last:border-b-0"
     >
-      <div className="project-check-all-body px-2 py-1">
+      <div className="project-check-all-body p-2 flex justify-center items-center">
         <input
           type={"checkbox"}
           className="py-1 task-select-box outline-none"
@@ -59,7 +59,7 @@ const Task = ({
         />
       </div>
 
-      <div className="project-title-body p-1 flex items-center space-x-1">
+      <div className="project-title-body p-2 flex items-center space-x-1">
         {/* <ArrowCircleRightIcon
           className="w-7 h-7 cursor-pointer"
           onClick={() => navigate(task?._id)}
@@ -71,7 +71,7 @@ const Task = ({
           style={{ backgroundColor: project?.repColor }}
         ></div> */}
         <input
-          className="py-1 px-1 border-none outline-none text-sm w-full font-normal 
+          className="px-1 border-none outline-none text-sm w-full font-normal 
             text-gray-500 focus:bg-slate-100 bg-inherit"
           data-id={task?._id}
           name="task_title"
@@ -88,9 +88,9 @@ const Task = ({
         />
       </div>
 
-      <div className="hidden md:inline-block  p-1">
+      <div className="hidden md:inline-block  p-2">
         <input
-          className="py-1  px-1 border-none outline-none text-sm w-full font-normal 
+          className="px-1 border-none outline-none text-sm w-full font-normal 
             text-gray-500 focus:bg-slate-100 bg-inherit"
           data-id={task?._id}
           name="task_description"
@@ -107,7 +107,7 @@ const Task = ({
         />
       </div>
 
-      <div className="hidden md:flex p-1 md:items-center md:gap-1">
+      <div className="hidden md:flex p-2 md:items-center md:gap-1">
         <span
           className={`w-2 h-2 rounded-full ${
             task?.status === "To be done" && "bg-slate-500"
@@ -118,32 +118,32 @@ const Task = ({
         <span className="text-xs font-normal">{task?.status}</span>
       </div>
 
-      <div className="hidden md:flex p-1 text-center text-xs font-normal">
+      <div className="hidden md:flex p-2 text-center text-xs font-normal">
         {task.dueDate && moment(task?.dueDate).format("DD MMM, YYYY")}
       </div>
 
-      <div className="hidden md:flex p-1 text-center text-xs font-normal">
+      <div className="hidden md:flex p-2 text-center text-xs font-normal">
         {task.updateAt && moment(task?.updateAt).format("DD MMM, YYYY")}
       </div>
 
       <div className="flex p-1 font-normal items-center gap-1">
         <button
           type="button"
-          className="bg-blue-500 px-2 py-1 rounded text-xs font-normal 
+          className="bg-blue-500  p-2 flex justify-center items-center rounded text-xs font-normal 
             text-white flex justify-center items-center hover:bg-blue-700"
           title="View"
           onClick={() => showTask(task)}
         >
-          <EyeIcon className="w-4 h-4" />
+          <EyeIcon className="w-4 h-4 md:w-5 md:h-5" />
         </button>
         <button
           type="button"
-          className="bg-green-500  px-2 py-1 rounded text-xs font-normal 
+          className="bg-green-500   p-2  flex justify-center items-center rounded text-xs font-normal 
             text-white flex justify-center items-center hover:bg-green-700"
           onClick={() => handleSetTaskDetailsForUpdate(task)}
           title="Edit"
         >
-          <PencilAltIcon className="w-4 h-4" />
+          <PencilAltIcon className="w-4 h-4 md:w-5 md:h-5" />
         </button>
       </div>
     </div>

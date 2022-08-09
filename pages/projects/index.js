@@ -29,21 +29,22 @@ import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import ShowProjectOverlay from "../../components/utilities/ShowProjectOverlay";
-import Pagination from "../../components/utilities/Pagination";
 import ActionMessge from "../../components/ActionMessge";
+import FilterOptionsOverlay from "../../components/utilities/FilterOptionsOverlay";
 
 const Index = ({ user }) => {
+  const { isClicked, handleClick, handleClose } = useContextState();
   const [projects, setProjects] = useState([]);
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [projectsSliceLimit, setProjectsSliceLimit] = useState(10);
-  const [projectsQuerystatus, setProjectsQueryStatus] = useState("all");
-  const [projectsQuerySort, setProjectsQuerySort] = useState("asc");
-  const [projectsSortBy, setProjectsSortBy] = useState("createdAt");
+  const [projectsFilterStatus, setProjectsFilterStatus] = useState("all");
+  const [projectsFilterSort, setProjectsFilterSort] = useState("desc");
+  const [projectsFilterOrderBy, setProjectsFilterOrderBy] =
+    useState("createdAt");
   const [projectsSearchTerm, setProjectsSearchTerm] = useState("");
   const [activePage, setActivePage] = useState(1);
   const [totalUserProjectsCount, setTotalUserProjectsCount] = useState(null);
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
   const [totalPagesCount, setTotalPagesCount] = useState(null);
 
   //details for creating projects
@@ -62,8 +63,6 @@ const Index = ({ user }) => {
   const [projectTobeUpdated, setProjectTobeUpdated] = useState(null);
   const [projectToBeShown, setProjectToBeShown] = useState(null);
 
-  const { isClicked, handleClick, handleClose } = useContextState();
-
   const notify = (message, type, position = "bottom-right") =>
     toast(message, { type }, { position });
   const router = useRouter();
@@ -71,9 +70,9 @@ const Index = ({ user }) => {
   const getUserProjects = (pageNmber = activePage) => {
     getAllUserProjects(
       pageNmber,
-      projectsQuerystatus,
-      projectsQuerySort,
-      projectsSortBy,
+      projectsFilterStatus,
+      projectsFilterOrderBy,
+      projectsFilterSort,
       projectsSearchTerm
     )
       .then((res) => {
@@ -98,9 +97,9 @@ const Index = ({ user }) => {
   }, [
     totalUserProjectsCount,
     activePage,
-    projectsQuerystatus,
-    projectsSortBy,
-    projectsQuerySort,
+    projectsFilterStatus,
+    projectsFilterSort,
+    projectsFilterOrderBy,
     projectsSearchTerm,
   ]);
 
@@ -166,7 +165,7 @@ const Index = ({ user }) => {
       });
   };
 
-  //create a project
+  // update project title or description from list
   const handleUpdateProjectFromList = (projectId, project) => {
     setIsProcessing(true);
     updateProject(`/api/projects/${projectId}/`, project)
@@ -193,11 +192,6 @@ const Index = ({ user }) => {
 
             return updatedProjects;
           });
-
-          handleClose("createOrUpdateProjectOverlay");
-          setIsProcessing(false);
-          notify("Project updated successfully!", "success");
-          clearFields();
         }
       })
       .catch((error) => {
@@ -488,7 +482,20 @@ const Index = ({ user }) => {
           />
         )}
 
-        <div className="relative flex flex-col">
+        {isClicked.showFilterOptionsOverlay && (
+          <FilterOptionsOverlay
+            type={"projects"}
+            close={() => handleClose("showFilterOptionsOverlay")}
+            projectsFilterStatus={projectsFilterStatus}
+            projectsFilterSort={projectsFilterSort}
+            projectsFilterOrderBy={projectsFilterOrderBy}
+            setProjectsFilterStatus={setProjectsFilterStatus}
+            setProjectsFilterOrderBy={setProjectsFilterOrderBy}
+            setProjectsFilterSort={setProjectsFilterSort}
+          />
+        )}
+
+        <div className="relative flex flex-col bg-white p-3">
           <div className="flex items-center space-x-2">
             <FolderIcon className="w-8 h-8" />{" "}
             <span className=" text-2xl font-semibold">Projects</span>
@@ -508,21 +515,22 @@ const Index = ({ user }) => {
           </div>
         </div>
 
-        <div className="mt-4 flex justify-between items-center w-full">
+        <div className="flex justify-between items-center w-full p-3 border-t border-t-slate-50 border-b border-b-slate-50">
           <p className="text-gray-500 text-lg font-semibold">
             Projects Total {!isLoading && `(${totalUserProjectsCount})`}
           </p>
           <button
             type="button"
-            className="p-2 bg-blue-500 rounded text-white text-sm font-semibold flex items-center justify-center  transition duration-50 hover:bg-blue-600 hover:drop-shadow-lg"
+            className="p-2 md:p-3 bg-blue-800 rounded text-white text-sm font-semibold flex items-center justify-center  transition duration-50 hover:bg-blue-600 hover:drop-shadow-lg"
             onClick={() => {
               setAction("create");
               handleClick("createOrUpdateProjectOverlay");
             }}
           >
             <PlusIcon className="w-4 h-4 md:w-5 md:h-5 text-white" />
-            Add
-            <span className="hidden md:inline">Project</span>
+            <span>
+              Add <span className="hidden md:inline"> Project</span>
+            </span>
           </button>
         </div>
 
@@ -548,151 +556,159 @@ const Index = ({ user }) => {
           />
         )}
 
-        <div className="mt-4 border border-slate-100 overflow-x-auto md:overflow-x-none">
-          <div className="flex justify-between items-center px-2 border-b border-b-slate-100 py-2">
-            <div className="flex items-center gap-2 md:gap-6">
-              <button
-                type="button"
-                className="flex justify-center items-center px-2 py-1 border border-slate-100 rounded text-gray-400"
-              >
-                <FilterIcon className="w-4 h-4 md:w-3 md:h-3" />
-                <span className="hidden md:inline-flex text-xs font-semibold">
-                  Filter
-                </span>
-              </button>
+        <div className="p-3">
+          <div className="border border-slate-100 overflow-x-auto md:overflow-x-none bg-white">
+            <div className="flex justify-between items-center px-2 border-b border-b-slate-100 py-2">
+              <div className="flex items-center gap-2 md:gap-6">
+                <button
+                  type="button"
+                  className="flex justify-center items-center space-x-2 px-2 py-1 border border-slate-100 rounded text-gray-400"
+                  onClick={() => handleClick("showFilterOptionsOverlay")}
+                >
+                  <FilterIcon className="w-4 h-4" />
+                  <span className="hidden md:inline-flex text-xs font-semibold">
+                    Filter
+                  </span>
+                </button>
 
-              <button
-                className={`flex items-center outline-none px-2 py-1 rounded border border-slate-100 ${
-                  deletableProjectsList.length > 0
-                    ? "bg-red-500 text-white"
-                    : "bg-slate-100 text-gray-400"
-                }`}
-                disabled={deletableProjectsList.length === 0 && true}
-                onClick={initiateProjectDeleteAction}
-              >
-                <TrashIcon className="w-4 h-4 md:w-3 md:h-3" />
-                <span className="hidden md:inline-flex text-xs font-semibold">
-                  Delete
-                </span>
-              </button>
-            </div>
+                <button
+                  className={`flex items-center outline-none px-2 py-1 rounded border border-slate-100 ${
+                    deletableProjectsList.length > 0
+                      ? "bg-red-500 text-white"
+                      : "bg-slate-100 text-gray-400"
+                  }`}
+                  disabled={deletableProjectsList.length === 0 && true}
+                  onClick={initiateProjectDeleteAction}
+                >
+                  <TrashIcon className="w-4 h-4 md:w-3 md:h-3" />
+                  <span className="hidden md:inline-flex text-xs font-semibold">
+                    Delete
+                  </span>
+                </button>
+              </div>
 
-            <div className="flex gap-3 items-center  bg-slate-50 px-2 py-1 rounded">
-              <SearchIcon className="w-4 h-4 text-gray-400" />
-              <input
-                type={"text"}
-                value={projectsSearchTerm}
-                className="outline-none bg-inherit w-[100px] md:w-[120px]"
-                placeholder="Search..."
-                onChange={(e) => setProjectsSearchTerm(e.target.value)}
-              />
-              {!isEmpty(projectsSearchTerm) && (
-                <XIcon
-                  className="w-4 h-4 cursor-pointer"
-                  title="Clear"
-                  onClick={() => setProjectsSearchTerm("")}
+              <div className="flex gap-3 items-center  bg-slate-50 px-2 py-1 rounded">
+                <SearchIcon className="w-4 h-4 text-gray-400" />
+                <input
+                  type={"text"}
+                  value={projectsSearchTerm}
+                  className="outline-none bg-inherit w-[100px] md:w-[170px]"
+                  placeholder="Search..."
+                  onChange={(e) => setProjectsSearchTerm(e.target.value)}
                 />
-              )}
-            </div>
-          </div>
-          <div
-            className="projects-header-grid text-xs md:text-sm font-semibold 
-          text-gray-500 border-b border-slate-100 bg-slate-50"
-          >
-            <div className="project-check-all-header p-2">
-              <input
-                type={"checkbox"}
-                onChange={(e) => toggleMultipleProjectsDeletion(e)}
-                checked={isDeletingMultipleSingleCheck}
-              />
-            </div>
-
-            <div className="project-title-header p-2 text-md">
-              Project Title
-            </div>
-
-            <div className="hidden md:inline-block project-description-header p-2 text-md">
-              Description
-            </div>
-
-            <div className="hidden md:inline-block project-status-header p-2 text-md">
-              Status
-            </div>
-
-            <div className="hidden md:inline-block project-due-date-header p-2 text-md">
-              Due date
-            </div>
-
-            <div className="hidden md:inline-block project-last-updated-header p-2 text-md">
-              Updated at
-            </div>
-
-            <div className="project-actions-header p-2 text-md">Actions</div>
-          </div>
-
-          {isLoading && (
-            <div className="flex justify-center items-center p-2">
-              <div className="text-slate-400 font-semibold text-sm py-2">
-                Loading projects...
+                {!isEmpty(projectsSearchTerm) && (
+                  <XIcon
+                    className="w-4 h-4 cursor-pointer"
+                    title="Clear"
+                    onClick={() => setProjectsSearchTerm("")}
+                  />
+                )}
               </div>
             </div>
-          )}
-
-          {!isLoading && projects?.length < 1 && (
-            <div className="text-center p-2">
-              <p className="text-sm text-gray-500">No projects found!</p>
-            </div>
-          )}
-
-          {!isLoading && projects?.length > 0 && (
-            <>
-              {projects?.map((project) => (
-                <Project
-                  key={project?._id}
-                  project={project}
-                  changeTitleOrDescription={changeTitleOrDescription}
-                  updateProject={handleUpdateProjectFromList}
-                  addToDeletableProjectsList={addToDeletableProjectsList}
-                  removeFromDeletableProjectsList={
-                    removeFromDeletableProjectsList
-                  }
-                  handleSetProjectDetailsForUpdate={
-                    handleSetProjectDetailsForUpdate
-                  }
-                  showProject={setProjectToBeShown}
+            <div
+              className="projects-header-grid text-xs md:text-sm font-semibold 
+          text-gray-500 border-b border-b-slate-100"
+            >
+              <div className="project-check-all-header px-2 py-4 flex justify-center items-center">
+                <input
+                  type={"checkbox"}
+                  onChange={(e) => toggleMultipleProjectsDeletion(e)}
+                  checked={isDeletingMultipleSingleCheck}
                 />
-              ))}
-            </>
-          )}
+              </div>
 
-          {!isLoading && (
-            <div className="flex justify-between items-center py-4 px-2">
-              {totalPagesCount > 1 && (
-                <p className="text-xs md:text-md text-gray-500 font-normal">
-                  Showing page {activePage} / {totalPagesCount}
-                </p>
-              )}
-              {totalUserProjectsCount > itemsPerPage && (
-                <div className="flex justify-center items-center border rounded">
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-2 text-sm md:text-md font-normal border-r text-gray-500 flex items-center justify-center space-x-2`}
-                    onClick={handleLoadPreviousPageContent}
-                    disabled={Number(activePage) === 1}
-                  >
-                    <ChevronLeftIcon className="w-4 h-4" /> Previous
-                  </button>
+              <div className="project-title-header px-2 py-4 flex text-md">
+                Project Title
+              </div>
 
-                  <button
-                    className="px-2 py-1 md:px-3 md:py-2 text-sm md:text-md font-normal text-gray-500 flex items-center justify-center space-x-2"
-                    onClick={handleLoadNextPageContent}
-                    disabled={Number(totalPagesCount) === 1}
-                  >
-                    Next <ChevronRightIcon className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
+              <div className="hidden md:inline project-description-header px-2 py-4 text-md">
+                Description
+              </div>
+
+              <div className="hidden md:inline project-status-header px-2 py-4 text-md">
+                Status
+              </div>
+
+              <div className="hidden md:inline project-due-date-header px-2 py-4 text-md">
+                Due date
+              </div>
+
+              <div className="hidden md:inline project-last-updated-header px-2 py-4 text-md">
+                Updated at
+              </div>
+
+              <div className="project-actions-header px-2 py-4 text-center text-md">
+                Actions
+              </div>
             </div>
-          )}
+
+            {isLoading && (
+              <div className="flex justify-center items-center p-2">
+                <div className="text-slate-400 font-semibold text-sm py-2">
+                  Loading projects...
+                </div>
+              </div>
+            )}
+
+            {!isLoading && projects?.length < 1 && (
+              <div className="text-center p-2">
+                <p className="text-sm text-gray-500">No projects found!</p>
+              </div>
+            )}
+
+            {!isLoading && projects?.length > 0 && (
+              <>
+                {projects?.map((project) => (
+                  <Project
+                    key={project?._id}
+                    project={project}
+                    changeTitleOrDescription={changeTitleOrDescription}
+                    updateProject={handleUpdateProjectFromList}
+                    addToDeletableProjectsList={addToDeletableProjectsList}
+                    removeFromDeletableProjectsList={
+                      removeFromDeletableProjectsList
+                    }
+                    handleSetProjectDetailsForUpdate={
+                      handleSetProjectDetailsForUpdate
+                    }
+                    showProject={setProjectToBeShown}
+                  />
+                ))}
+              </>
+            )}
+
+            {!isLoading && (
+              <div className="flex justify-between items-center py-4 px-2">
+                {totalPagesCount > 1 && (
+                  <p className="text-xs md:text-md text-gray-500 font-normal">
+                    Showing page {activePage} / {totalPagesCount}
+                  </p>
+                )}
+                {totalUserProjectsCount > itemsPerPage && (
+                  <div className="flex justify-center items-center border rounded">
+                    <button
+                      className={`px-2 py-1 md:px-3 md:py-2 text-sm md:text-md font-normal text-gray-500 flex items-center justify-center space-x-2`}
+                      onClick={handleLoadPreviousPageContent}
+                      disabled={Number(activePage) === 1}
+                    >
+                      <ChevronLeftIcon className="w-4 h-4" /> Previous
+                    </button>
+
+                    <button
+                      className="px-2 py-1 md:px-3 md:py-2 text-sm md:text-md font-normal text-gray-500 flex items-center justify-center space-x-2"
+                      onClick={handleLoadNextPageContent}
+                      disabled={
+                        Number(totalPagesCount) === 1 ||
+                        Number(activePage) === totalPagesCount
+                      }
+                    >
+                      Next <ChevronRightIcon className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </Layout>
     </React.Fragment>

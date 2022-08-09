@@ -25,18 +25,21 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="flex flex-col justify-between h-screen  md:overflow-hidden oveflow-auto md:hover:overflow-auto pb-5">
+    <div
+      className="flex flex-col text-white justify-between h-screen 
+     md:overflow-hidden oveflow-auto md:hover:overflow-auto pb-5"
+    >
       <div className="px-3">
         {isSidebarOpen && (
           <div className="flex justify-between items-center px-1 mt-2">
             <div className="font-semibold text-2xl">Taskit</div>
             <button
-              className="md:hidden text-xl rounded-full hover:bg-light-gray"
+              className="md:hidden t-full hover:bg-light-gray"
               onClick={() => {
                 setIsSidebarOpen((previousState) => !previousState);
               }}
             >
-              <XCircleIcon className="w-6 h-6" style={{ color: "#03C9D7" }} />
+              <XCircleIcon className="w-8 h-8 text-white" />
             </button>
           </div>
         )}
@@ -44,50 +47,56 @@ const Sidebar = () => {
           <div className="flex flex-col gap-4 text-sm">
             <Link href={"/"}>
               <div
-                className="flex items-center gap-3 py-1 rounded px-1 hover:bg-slate-100 cursor-pointer"
+                className={`flex items-center gap-3 py-2 px-1 hover:bg-[#0f5c7b] cursor-pointer ${
+                  router.asPath === "/"
+                    ? "border-l-4 border-l-orange-400 bg-[#0f5c7b]"
+                    : "border-none"
+                }`}
                 onClick={handleCloseSidebar}
               >
-                <HomeIcon className="w-5 h-5 text-gray-700" />
+                <HomeIcon className="w-5 h-5 text-white" />
                 <span>Home</span>
               </div>
             </Link>
 
             <Link href={"/projects/"}>
               <div
-                className={`flex items-center gap-3 py-1 rounded px-1 hover:bg-slate-100 cursor-pointer`}
+                className={`flex items-center gap-3 py-2 px-1 hover:bg-[#0f5c7b] cursor-pointer ${
+                  router.asPath === "/projects"
+                    ? "border-l-4 border-l-orange-400 bg-[#0f5c7b]"
+                    : "border-none"
+                }`}
                 onClick={handleCloseSidebar}
               >
-                <FolderIcon className="w-5 h-5 text-gray-700" />
+                <FolderIcon className="w-5 h-5 text-white" />
                 <span>Projects</span>
               </div>
             </Link>
 
-            <Link href={"/projects"}>
+            <Link href={"/members"}>
               <div
-                className="flex items-center gap-3 py-1 rounded px-1 hover:bg-slate-100 cursor-pointer"
+                className={`flex items-center gap-3 py-2 px-1 hover:bg-[#0f5c7b] cursor-pointer ${
+                  router.asPath === "/members"
+                    ? "border-l-4 border-l-orange-400 bg-[#0f5c7b]"
+                    : "border-none"
+                }`}
                 onClick={handleCloseSidebar}
               >
-                <ClipboardCheckIcon className="w-5 h-5 text-gray-700" />
-                <span>Tasks</span>
-              </div>
-            </Link>
-
-            <Link href={"/projects"}>
-              <div
-                className="flex items-center gap-3 py-1 rounded px-1 hover:bg-slate-100 cursor-pointer"
-                onClick={handleCloseSidebar}
-              >
-                <UsersIcon className="w-5 h-5 text-gray-700" />
+                <UsersIcon className="w-5 h-5 text-white" />
                 <span>Members</span>
               </div>
             </Link>
 
-            <Link href={"/projects"}>
+            <Link href={"/general-settings"}>
               <div
-                className="flex items-center gap-3 py-1 rounded px-1 hover:bg-slate-100 cursor-pointer"
+                className={`flex items-center gap-3 py-2 px-1 hover:bg-[#0f5c7b] cursor-pointer ${
+                  router.asPath === "/general-settings"
+                    ? "border-l-4 border-l-orange-400 bg-[#0f5c7b]"
+                    : "border-none"
+                }`}
                 onClick={handleCloseSidebar}
               >
-                <CogIcon className="w-5 h-5 text-gray-700" />
+                <CogIcon className="w-5 h-5 text-white" />
                 <span>General Settings</span>
               </div>
             </Link>
@@ -97,15 +106,15 @@ const Sidebar = () => {
 
       <div className="flex flex-col  gap-2 text-sm px-3">
         <Link href={"/projects"}>
-          <div className="flex items-center gap-3 py-1  px-1 hover:text-blue-500 cursor-pointer">
-            <UserAddIcon className="w-5 h-5 text-gray-700" />
+          <div className="flex items-center gap-3 py-2  px-1 hover:text-blue-500 cursor-pointer">
+            <UserAddIcon className="w-5 h-5 text-white" />
             <span>Invite Members</span>
           </div>
         </Link>
 
         <Link href={"/projects"}>
-          <div className="flex items-center gap-3 py-1 px-1 hover:text-blue-500 cursor-pointer">
-            <QuestionMarkCircleIcon className="w-5 h-5 text-gray-700" />
+          <div className="flex items-center gap-3 py-2 px-1 hover:text-blue-500 cursor-pointer">
+            <QuestionMarkCircleIcon className="w-5 h-5 text-white" />
             <span>Help & Getting Started</span>
           </div>
         </Link>

@@ -30,6 +30,7 @@ import ActionMessge from "../../../../components/ActionMessge";
 import ShowTaskOverlay from "../../../../components/utilities/ShowTaskOverlay";
 import ActionModal from "../../../../components/utilities/ActionModal";
 import { useContextState } from "../../../../contexts/ContextProvider";
+import FilterOptionsOverlay from "../../../../components/utilities/FilterOptionsOverlay";
 
 const Index = ({ user }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -39,9 +40,9 @@ const Index = ({ user }) => {
   const router = useRouter();
   const { projectId } = router.query;
   const { isClicked, handleClick, handleClose } = useContextState();
-  const [tasksQueryStatus, setTasksQueryStatus] = useState("all");
-  const [tasksQuerySort, setTasksQuerySort] = useState("asc");
-  const [tasksSortBy, setTasksSortBy] = useState("createdAt");
+  const [tasksFilterStatus, setTasksFilterStatus] = useState("all");
+  const [tasksFilterSort, setTasksFilterSort] = useState("desc");
+  const [tasksFilterOrderBy, setTasksFilterOrderBy] = useState("createdAt");
   const [tasksSearchTerm, setTasksSearchTerm] = useState("");
   const [action, setAction] = useState("create");
   const [task_title, setTaskTitle] = useState("");
@@ -69,7 +70,7 @@ const Index = ({ user }) => {
       .get(
         `/api/project/${projectId}?page=${Number(
           activePage
-        )}&status=${tasksQueryStatus}&sort_order=${tasksQuerySort}&sort_by=${tasksSortBy}&q=${tasksSearchTerm}`
+        )}&status=${tasksFilterStatus}&order_by=${tasksFilterOrderBy}&sort_in=${tasksFilterSort}&q=${tasksSearchTerm}`
       )
       .then((res) => {
         setProject(res.data.project);
@@ -98,9 +99,9 @@ const Index = ({ user }) => {
   }, [
     activePage,
     totalTasksCount,
-    tasksQuerySort,
-    tasksQueryStatus,
-    tasksSortBy,
+    tasksFilterOrderBy,
+    tasksFilterStatus,
+    tasksFilterSort,
     tasksSearchTerm,
   ]);
 
@@ -446,7 +447,20 @@ const Index = ({ user }) => {
             deleteTask={deleteTaskFromDescription}
           />
         )}
-        <div className="relative flex flex-col">
+
+        {isClicked.showFilterOptionsOverlay && (
+          <FilterOptionsOverlay
+            type={"tasks"}
+            tasksFilterSort={tasksFilterSort}
+            setTasksFilterSort={setTasksFilterSort}
+            tasksFilterOrderBy={tasksFilterOrderBy}
+            setTasksFilterOrderBy={setTasksFilterOrderBy}
+            tasksFilterStatus={tasksFilterStatus}
+            setTasksFilterStatus={setTasksFilterStatus}
+            close={() => handleClose("showFilterOptionsOverlay")}
+          />
+        )}
+        <div className="relative flex flex-col bg-white p-3">
           <div className="flex items-center space-x-2">
             {!isLoading && (
               <>
@@ -481,13 +495,13 @@ const Index = ({ user }) => {
           </div>
         </div>
 
-        <div className="mt-4 flex justify-between items-center w-full">
+        <div className="mt-4 flex justify-between items-center w-full p-3">
           <p className="text-gray-500 text-lg font-bold">
             Tasks Total {!isLoading && `(${totalTasksCount})`}
           </p>
           <button
             type="button"
-            className="p-2 bg-blue-500 rounded text-white text-sm font-semibold flex items-center justify-center  transition duration-50 hover:bg-blue-600 hover:drop-shadow-lg"
+            className="p-2 md:p-3 bg-blue-800 rounded text-white text-sm font-semibold flex items-center justify-center  transition duration-50 hover:bg-blue-600 hover:drop-shadow-lg"
             onClick={() => {
               handleClick("createOrUpdateTaskOverlay");
             }}
@@ -527,146 +541,155 @@ const Index = ({ user }) => {
           </div>
         )}
 
-        <div className="mt-4 border border-slate-100 overflow-x-auto md:overflow-x-none">
-          <div className="flex justify-between items-center px-2 border-b border-b-slate-100 py-2">
-            <div className="flex items-center gap-2 md:gap-6">
-              <button
-                type="button"
-                className="flex justify-center items-center px-2 py-1 border border-slate-100 rounded text-gray-400"
-              >
-                <FilterIcon className="w-4 h-4 md:w-3 md:h-3" />
-                <span className="hidden md:inline-flex text-xs font-semibold">
-                  Filter
-                </span>
-              </button>
+        <div className="p-3">
+          <div className="border border-slate-100 overflow-x-auto md:overflow-x-none bg-white">
+            <div className="flex justify-between items-center px-2 border-b border-b-slate-100 py-2">
+              <div className="flex items-center gap-2 md:gap-6">
+                <button
+                  type="button"
+                  className="flex justify-center items-center space-x-2 px-2 py-1 border border-slate-100 rounded text-gray-400"
+                  onClick={() => handleClick("showFilterOptionsOverlay")}
+                >
+                  <FilterIcon className="w-4 h-4" />
+                  <span className="hidden md:inline-flex text-xs font-semibold">
+                    Filter
+                  </span>
+                </button>
 
-              <button
-                className={`flex items-center outline-none px-2 py-1 rounded border border-slate-100 ${
-                  deletableTasksList.length > 0
-                    ? "bg-red-500 text-white"
-                    : "bg-slate-100 text-gray-400"
-                }`}
-                disabled={deletableTasksList.length === 0 && true}
-                onClick={() => setShowActionModal(true)}
-              >
-                <TrashIcon className="w-4 h-4 md:w-3 md:h-3" />
-                <span className="hidden md:inline-flex text-xs font-semibold">
-                  Delete
-                </span>
-              </button>
-            </div>
+                <button
+                  className={`flex items-center outline-none px-2 py-1 rounded border border-slate-100 ${
+                    deletableTasksList.length > 0
+                      ? "bg-red-500 text-white"
+                      : "bg-slate-100 text-gray-400"
+                  }`}
+                  disabled={deletableTasksList.length === 0 && true}
+                  onClick={() => setShowActionModal(true)}
+                >
+                  <TrashIcon className="w-4 h-4 md:w-3 md:h-3" />
+                  <span className="hidden md:inline-flex text-xs font-semibold">
+                    Delete
+                  </span>
+                </button>
+              </div>
 
-            <div className="flex gap-3 items-center  bg-slate-50 px-2 py-1 rounded ">
-              <SearchIcon className="w-4 h-4 text-gray-400" />
-              <input
-                type={"text"}
-                value={tasksSearchTerm}
-                className="outline-none bg-inherit w-[100px] md:w-fit"
-                placeholder="Search..."
-                onChange={(e) => setTasksSearchTerm(e.target.value)}
-              />
-              {!isEmpty(tasksSearchTerm) && (
-                <XIcon
-                  className="w-4 h-4 cursor-pointer"
-                  title="Clear"
-                  onClick={() => setTasksSearchTerm("")}
+              <div className="flex gap-3 items-center  bg-slate-50 px-2 py-1 rounded ">
+                <SearchIcon className="w-4 h-4 text-gray-400" />
+                <input
+                  type={"text"}
+                  value={tasksSearchTerm}
+                  className="outline-none bg-inherit w-[100px] md:w-fit"
+                  placeholder="Search..."
+                  onChange={(e) => setTasksSearchTerm(e.target.value)}
                 />
-              )}
-            </div>
-          </div>
-
-          <div
-            className="projects-header-grid text-xs md:text-sm font-semibold 
-          text-gray-500 border-b border-slate-100 even:bg-slate-50"
-          >
-            <div className="task-check-all-header p-2">
-              <input
-                type={"checkbox"}
-                onChange={(e) => toggleMultipleTasksDeletion(e)}
-                checked={isDeletingMultipleSingleCheck}
-              />
-            </div>
-
-            <div className="task-title-header p-2 text-md">Task Title</div>
-
-            <div className="hidden md:inline-block task-description-header p-2 text-md">
-              Description
-            </div>
-
-            <div className="hidden md:inline-block task-status-header p-2 text-md">
-              Status
-            </div>
-
-            <div className="hidden md:inline-block task-due-date-header p-2 text-md">
-              Due date
-            </div>
-
-            <div className="hidden md:inline-block task-last-updated-header p-2 text-md">
-              Updated at
-            </div>
-
-            <div className="task-actions-header p-2 text-md">Actions</div>
-          </div>
-
-          {isLoading && (
-            <div className="flex justify-center items-center p-2">
-              <div className="text-slate-400 font-semibold text-sm py-2">
-                Loading tasks...
+                {!isEmpty(tasksSearchTerm) && (
+                  <XIcon
+                    className="w-4 h-4 cursor-pointer"
+                    title="Clear"
+                    onClick={() => setTasksSearchTerm("")}
+                  />
+                )}
               </div>
             </div>
-          )}
 
-          {!isLoading && tasks?.length < 1 && (
-            <div className="text-center p-2">
-              <p className="text-sm text-gray-500">No tasks found!</p>
-            </div>
-          )}
-
-          {!isLoading && tasks?.length > 0 && (
-            <>
-              {tasks?.map((task) => (
-                <Task
-                  key={task?._id}
-                  task={task}
-                  changeTitleOrDescription={changeTitleOrDescription}
-                  handleUpdateTask={handleUpdateTask}
-                  addToDeletableTasksList={addToDeletableTasksList}
-                  removeFromDeletableTasksList={removeFromDeletableProjectsList}
-                  handleSetTaskDetailsForUpdate={handleSetTaskDetailsForUpdate}
-                  showTask={setTaskToBeShown}
+            <div
+              className="tasks-header-grid text-xs md:text-sm font-semibold 
+          text-gray-500 border-b border-b-slate-100"
+            >
+              <div className="task-check-all-header px-2 py-4 flex justify-center items-center">
+                <input
+                  type={"checkbox"}
+                  onChange={(e) => toggleMultipleTasksDeletion(e)}
+                  checked={isDeletingMultipleSingleCheck}
                 />
-              ))}
-            </>
-          )}
+              </div>
 
-          {!isLoading && (
-            <div className="flex justify-between items-center py-4 px-2">
-              {totalPagesCount > 0 && (
-                <p className="text-xs md:text-md text-gray-500 font-normal">
-                  Showing page {activePage} / {totalPagesCount}
-                </p>
-              )}
-              {totalTasksCount > itemsPerPage && (
-                <div className="flex justify-center items-center border rounded">
-                  <button
-                    className={`px-2 py-1 md:px-3 md:py-2 text-sm md:text-md font-normal border-r text-gray-500 flex items-center justify-center space-x-2`}
-                    onClick={handleLoadPreviousPageContent}
-                    disabled={Number(activePage) === 1}
-                  >
-                    <ChevronLeftIcon className="w-4 h-4" /> Previous
-                  </button>
+              <div className="task-title-header p-2 text-md">Task Title</div>
 
-                  <button
-                    className="px-2 py-1 md:px-3 md:py-2 text-sm md:text-md font-normal text-gray-500 flex items-center justify-center space-x-2"
-                    onClick={handleLoadNextPageContent}
-                    disabled={Number(totalPagesCount) === 1}
-                  >
-                    Next <ChevronRightIcon className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
+              <div className="hidden md:inline task-description-header px-2 py-4 text-md">
+                Description
+              </div>
+
+              <div className="hidden md:inline task-status-header p-2 text-md px-2 py-4 text-md">
+                Status
+              </div>
+
+              <div className="hidden md:inline task-due-date-header p-2 text-md px-2 py-4 text-md">
+                Due date
+              </div>
+
+              <div className="hidden md:inline task-last-updated-header p-2 text-md px-2 py-4 text-md">
+                Updated at
+              </div>
+
+              <div className="task-actions-header p-2 text-md px-2 py-4 text-center text-md">
+                Actions
+              </div>
             </div>
-          )}
+
+            {isLoading && (
+              <div className="flex justify-center items-center p-2">
+                <div className="text-slate-400 font-semibold text-sm py-2">
+                  Loading tasks...
+                </div>
+              </div>
+            )}
+
+            {!isLoading && tasks?.length < 1 && (
+              <div className="text-center p-2">
+                <p className="text-sm text-gray-500">No tasks found!</p>
+              </div>
+            )}
+
+            {!isLoading && tasks?.length > 0 && (
+              <>
+                {tasks?.map((task) => (
+                  <Task
+                    key={task?._id}
+                    task={task}
+                    changeTitleOrDescription={changeTitleOrDescription}
+                    handleUpdateTask={handleUpdateTask}
+                    addToDeletableTasksList={addToDeletableTasksList}
+                    removeFromDeletableTasksList={
+                      removeFromDeletableProjectsList
+                    }
+                    handleSetTaskDetailsForUpdate={
+                      handleSetTaskDetailsForUpdate
+                    }
+                    showTask={setTaskToBeShown}
+                  />
+                ))}
+              </>
+            )}
+
+            {!isLoading && (
+              <div className="flex justify-between items-center py-4 px-2">
+                {totalPagesCount > 0 && (
+                  <p className="text-xs md:text-md text-gray-500 font-normal">
+                    Showing page {activePage} / {totalPagesCount}
+                  </p>
+                )}
+                {totalTasksCount > itemsPerPage && (
+                  <div className="flex justify-center items-center border rounded">
+                    <button
+                      className={`px-2 py-1 md:px-3 md:py-2 text-sm md:text-md font-normal border-r text-gray-500 flex items-center justify-center space-x-2`}
+                      onClick={handleLoadPreviousPageContent}
+                      disabled={Number(activePage) === 1}
+                    >
+                      <ChevronLeftIcon className="w-4 h-4" /> Previous
+                    </button>
+
+                    <button
+                      className="px-2 py-1 md:px-3 md:py-2 text-sm md:text-md font-normal text-gray-500 flex items-center justify-center space-x-2"
+                      onClick={handleLoadNextPageContent}
+                      disabled={Number(totalPagesCount) === 1}
+                    >
+                      Next <ChevronRightIcon className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </Layout>
     </>
